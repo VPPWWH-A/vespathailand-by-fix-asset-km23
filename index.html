@@ -1455,31 +1455,56 @@ function printModalLabel() {
 
 // ==================== EXPORT ====================
 function exportExcel() {
-  if(!allAssets || allAssets.length === 0) { alert("กรุณาโหลดข้อมูลก่อน"); return; }
+  if(!allAssets || allAssets.length === 0) { 
+    alert("กรุณาโหลดข้อมูลก่อน"); 
+    return; 
+  }
 
   const exportData = [];
   
-  // Header
+  // ✅ กำหนด Headers เองตามโครงสร้างจริงของ allAssets
+  const HEADERS = [
+    "รหัสทรัพย์สิน", 
+    "ชื่อทรัพย์สิน", 
+    "หมวดหมู่", 
+    "พื้นที่", 
+    "คลัง", 
+    "วันที่ได้มา", 
+    "สถานะ", 
+    "เช็คล่าสุด", 
+    "ผลการเช็ค"
+  ];
+
+  // Metadata แถวบน
   exportData.push(["รายงานทรัพย์สิน - VESPA THAILAND CO., LTD."]);
   exportData.push(["วันที่ส่งออก:", new Date().toLocaleDateString('th-TH')]);
-  exportData.push([]);
+  exportData.push([]); // แถวว่าง
   
-  // Table Headers
-  exportData.push(window.rawHeaders);
+  // ✅ ใช้ Headers ที่กำหนดเอง
+  exportData.push(HEADERS);
 
+  // Loop ข้อมูล
   allAssets.forEach(row => {
-    const newRow = [...row];
-    newRow[5] = newRow[5] ? formatDate(newRow[5]) : ''; // วันที่ได้มา
-    newRow[7] = newRow[7] ? formatDateTime(newRow[7]) : ''; // วันที่เช็คล่าสุด
+    const newRow = [
+      row[0] || '',              // รหัสทรัพย์สิน
+      row[1] || '',              // ชื่อทรัพย์สิน
+      row[2] || '',              // หมวดหมู่
+      row[3] || '',              // พื้นที่
+      row[4] || '',              // คลัง
+      row[5] ? formatDate(row[5]) : '',      // วันที่ได้มา
+      row[6] || 'Active',        // สถานะ
+      row[7] ? formatDateTime(row[7]) : '', // เช็คล่าสุด
+      row[8] || ''               // ผลการเช็ค
+    ];
     exportData.push(newRow);
   });
 
-  // Create workbook and worksheet
+  // สร้าง Workbook
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(exportData);
 
-  // Set column widths dynamically
-  const colWidths = [
+  // กำหนดความกว้างคอลัมน์
+  ws['!cols'] = [
     { wch: 15 }, // รหัส
     { wch: 45 }, // ชื่อทรัพย์สิน
     { wch: 12 }, // หมวดหมู่
@@ -1487,17 +1512,14 @@ function exportExcel() {
     { wch: 10 }, // คลัง
     { wch: 15 }, // วันที่ได้มา
     { wch: 15 }, // สถานะ
-    { wch: 22 }  // เช็คล่าสุด
+    { wch: 22 }, // เช็คล่าสุด
+    { wch: 15 }  // ผลการเช็ค
   ];
-  // Add width for all dynamically generated month columns
-  for(let i = 8; i < window.rawHeaders.length; i++) {
-    colWidths.push({ wch: 15 });
-  }
-  ws['!cols'] = colWidths;
 
   XLSX.utils.book_append_sheet(wb, ws, "Assets");
   XLSX.writeFile(wb, `VESPA_Asset_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
 }
+
 
 // ==================== INIT ====================
 if(API_URL.includes("YOUR_SCRIPT_ID")) {
