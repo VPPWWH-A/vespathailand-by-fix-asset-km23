@@ -1101,13 +1101,6 @@ async function startScanner() {
       Html5QrcodeSupportedFormats.DATA_MATRIX,
     ];
 
-    // ตั้งค่าความละเอียดสูง (HD/FullHD) แนะนำ (ideal) แทนการบังคับ (min) เพื่อป้องกันกล้องบางรุ่นเปิดไม่ได้
-    const cameraConstraints = {
-      facingMode: { ideal: "environment" },
-      width: { ideal: 1920 },
-      height: { ideal: 1080 }
-    };
-
     // ปรับขนาดกรอบ (qrbox) ให้ยืดหยุ่นตามขนาดหน้าจอของมือถือแต่ละรุ่น
     const config = { 
       fps: 20, 
@@ -1121,13 +1114,9 @@ async function startScanner() {
       disableFlip: false 
     };
 
-    try {
-      await html5QrCode.start(cameraConstraints, config, onScanSuccess, () => {});
-    } catch (err2) {
-      // หากตั้งค่ากล้องความละเอียดสูงไม่สำเร็จ ให้ลองใช้ค่าพื้นฐาน
-      console.warn("High-res camera failed, falling back to basic camera", err2);
-      await html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, () => {});
-    }
+    // บน Safari iOS ถ้าตั้งค่าความละเอียด (constraints) ที่ซับซ้อนเกินไป เบราว์เซอร์จะบล็อกการเปิดกล้อง
+    // จึงใช้ค่าพื้นฐาน { facingMode: "environment" } เพื่อให้ไลบรารีดึงกล้องหลักของ iPhone ได้อย่างถูกต้อง
+    await html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, () => {});
     
     isScanning = true;
     document.getElementById("btn-start").classList.add("hidden");
