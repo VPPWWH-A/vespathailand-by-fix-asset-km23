@@ -1101,21 +1101,21 @@ async function startScanner() {
       Html5QrcodeSupportedFormats.DATA_MATRIX,
     ];
 
-    // ปรับขนาดกรอบ (qrbox) ให้ยืดหยุ่นตามขนาดหน้าจอของมือถือแต่ละรุ่น
+    // ปรับขนาดกรอบ (qrbox) ให้เป็นสี่เหลี่ยมจัตุรัสขนาดใหญ่ (85% ของจอ)
     const config = { 
       fps: 20, 
       qrbox: function(viewfinderWidth, viewfinderHeight) {
         let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
-        let boxWidth = Math.floor(minEdgeSize * 0.85); // กว้าง 85% ของจอ
-        return { width: boxWidth, height: Math.floor(boxWidth * 0.5) }; // อัตราส่วนแบบบาร์โค้ด
+        let boxSize = Math.floor(minEdgeSize * 0.85); 
+        return { width: boxSize, height: boxSize }; // สี่เหลี่ยมจัตุรัสเพื่อให้ผู้ใช้ถอยมือถือออกห่างได้ (ช่วยเรื่องโฟกัส)
       }, 
       formatsToSupport: formats, 
-      aspectRatio: 1.5, 
+      aspectRatio: 1.0, // ปรับให้ภาพแสดงผลเป็นสี่เหลี่ยมจัตุรัสมากขึ้น
       disableFlip: false 
     };
 
-    // บน Safari iOS ถ้าตั้งค่าความละเอียด (constraints) ที่ซับซ้อนเกินไป เบราว์เซอร์จะบล็อกการเปิดกล้อง
-    // จึงใช้ค่าพื้นฐาน { facingMode: "environment" } เพื่อให้ไลบรารีดึงกล้องหลักของ iPhone ได้อย่างถูกต้อง
+    // ใช้ค่าพื้นฐาน { facingMode: "environment" } เท่านั้น เพื่อป้องกัน Safari บน iPhone บล็อกการเปิดกล้อง
+    // (บน iPhone ระบบจะทำ Auto Focus ให้เองโดยอัตโนมัติอยู่แล้วเมื่อระยะห่างเหมาะสม)
     await html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, () => {});
     
     isScanning = true;
