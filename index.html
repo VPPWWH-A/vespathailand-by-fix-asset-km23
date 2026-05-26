@@ -1481,39 +1481,48 @@ async function confirmScanCount() {
   const hasLocationUpdate = newWarehouse || newArea;
 
   try {
-    // Upload image if selected
-    let imageUrl = "";
+    let base64 = "";
     if (hasImage) {
       const file = fileInput.files[0];
-      const base64 = await new Promise((resolve) => {
+      base64 = await new Promise((resolve) => {
         const r = new FileReader();
         r.onload = () => resolve(r.result.split(",")[1]);
         r.readAsDataURL(file);
       });
-      const uploadRes = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          image: base64,
-          assetNo: pendingScanData.assetNo,
-          assetName: pendingScanData.assetName || "",
-          category: pendingScanData.category || "",
-          warehouse: newWarehouse || pendingScanData.warehouse || "",
-          area: newArea || pendingScanData.area || "",
-          remarks: "Scan Update"
-        })
-      });
-      const uploadData = await uploadRes.json().catch(() => null);
-      if (uploadData && uploadData.fileUrl) imageUrl = uploadData.fileUrl;
     }
 
-    // Update location & image if needed
-    if (hasLocationUpdate || imageUrl) {
-      const params = { action: "updateAsset", assetNo: pendingScanData.assetNo };
-      if (newWarehouse) params.warehouse = newWarehouse;
-      if (newArea) params.area = newArea;
-      if (imageUrl) params.imageLink = imageUrl;
-      await fetch(apiUrl(params));
+    // 🚀 Single POST request for everything (Count mark, Location update, Image upload)
+    const payload = {
+      action: "updateAsset",
+      assetNo: pendingScanData.assetNo,
+      assetName: pendingScanData.assetName || "",
+      isScan: true,
+      warehouse: newWarehouse,
+      area: newArea,
+      image: base64
+    };
+
+    const uploadRes = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    
+    const uploadData = await uploadRes.json().catch(() => null);
+    if (!uploadData || uploadData.status === "error") {
+      throw new Error(uploadData ? uploadData.message : "การตอบกลับไม่ถูกต้อง");
+    }
+
+    const imageUrl = uploadData.imageUrl || "";
+
+    // Update local data so UI reflects changes immediately
+    const assetIdx = allAssets.findIndex(row => String(row[0]).trim().toUpperCase() === pendingScanData.assetNo);
+    if (assetIdx > -1) {
+      allAssets[assetIdx][7] = new Date().toISOString();
+      allAssets[assetIdx][8] = "Count";
+      if (newArea) allAssets[assetIdx][3] = newArea;
+      if (newWarehouse) allAssets[assetIdx][4] = newWarehouse;
+      if (imageUrl) allAssets[assetIdx][10] = imageUrl;
     }
 
     closeScanConfirmModal();
@@ -1550,28 +1559,30 @@ async function onScanSuccess(decodedText) {
   isProcessing = true;
   const cleanCode = String(decodedText).trim().toUpperCase();
   if (html5QrCode && isScanning) { try { await html5QrCode.pause(true); } catch(e){} }
-  showLoading("กำลังตรวจสอบ...");
-  try {
-    const controller = new AbortController();
-    const timeout    = setTimeout(() => controller.abort(), 8000);
-    const response   = await fetch(apiUrl({ action: "scan", assetNo: cleanCode }), { signal: controller.signal });
-    clearTimeout(timeout);
-    const data = await response.json().catch(() => null);
-    if (!data) { showError("ข้อมูลที่ได้รับไม่ถูกต้อง"); }
-    else if (data.status === "success") {
-      if (data.found) showSuccess(data);
-      else showNotFound(data.assetNo);
-    } else {
-      showError(data.message || "ไม่สามารถตรวจสอบได้");
-    }
-  } catch(err) {
-    if (err.name === "AbortError") showError("หมดเวลา — ลองใหม่อีกครั้ง");
-    else showError("เชื่อมต่อไม่สำเร็จ");
+  
+  // 🚀 Instant Local Search (Performance Optimization)
+  const localMatch = allAssets.find(row => String(row[0]).trim().toUpperCase() === cleanCode);
+  
+  if (localMatch) {
+    const data = {
+      assetNo: localMatch[0],
+      assetName: localMatch[1],
+      category: localMatch[2],
+      area: localMatch[3],
+      warehouse: localMatch[4],
+      acquisitionDate: localMatch[5],
+      assetStatus: localMatch[6]
+    };
+    showSuccess(data);
+  } else {
+    showNotFound(cleanCode);
   }
+
+  // Note: We keep a delay before resuming scanner to prevent double scans
   setTimeout(async () => {
     isProcessing = false;
     if (html5QrCode && isScanning) { try { await html5QrCode.resume(); } catch(e){} }
-  }, 1200);
+  }, 1500);
 }
 
 
