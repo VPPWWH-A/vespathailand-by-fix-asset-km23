@@ -1635,6 +1635,8 @@ function showNotFound(assetNo) {
       <div style="font-size:14px;color:var(--text-dim);margin-top:4px;">รหัสนี้เกินจากระบบ (Over from system)</div>
       <button class="btn btn-gold" onclick="showAddForm('${safeNo}')" style="margin-top:10px;width:auto;padding:10px 20px;font-size:12px;">📸 ถ่ายรูปและเพิ่มข้อมูล</button>
     </div>`);
+
+  setTimeout(() => { showAddForm(safeNo); }, 500);
 }
 
 async function onScanSuccess(decodedText) {
@@ -1664,6 +1666,28 @@ async function onScanSuccess(decodedText) {
       if (html5QrCode && isScanning) { try { await html5QrCode.resume(); } catch(e){} }
     }, 1500);
   } else {
+    // Check if it exists in Unregistered assets first
+    if (allUnregAssets) {
+      const unregMatch = allUnregAssets.find(row => String(row[0]).trim().toUpperCase() === cleanCode);
+      if (unregMatch) {
+        const data = {
+          assetNo: unregMatch[0],
+          assetName: unregMatch[1],
+          category: unregMatch[2],
+          warehouse: unregMatch[3],
+          area: unregMatch[4],
+          isUnregistered: true
+        };
+        showSuccess(data);
+        
+        setTimeout(async () => {
+          isProcessing = false;
+          if (html5QrCode && isScanning) { try { await html5QrCode.resume(); } catch(e){} }
+        }, 1500);
+        return;
+      }
+    }
+
     // 🔍 Fallback to Live Query if not found locally (Fixes out-of-sync or uninitialized cache)
     showLoading("ไม่พบในเครื่อง กำลังตรวจสอบกับเซิร์ฟเวอร์แบบเรียลไทม์...");
     try {
@@ -2780,7 +2804,6 @@ function closeManualAddModal() {
   document.getElementById("manual-asset-no").value = "";
   document.getElementById("manual-name").value = "";
   document.getElementById("manual-category").value = "";
-  document.getElementById("manual-remarks").value = "";
   document.getElementById("manual-image").value = "";
   manualImageBase64 = null;
   document.getElementById("manual-preview-container").classList.add("hidden");
