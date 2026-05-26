@@ -1342,11 +1342,27 @@ async function onScanSuccess(decodedText) {
 async function startScanner() {
   if (isScanning) return;
   const reader = document.getElementById("reader");
-  reader.innerHTML = `<div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>`;
+  reader.innerHTML = `<div style="padding:30px;text-align:center;"><div class="spinner"></div><div style="margin-top:10px;font-size:13px;color:var(--text-muted);">กำลังขออนุญาตเปิดกล้อง...</div></div>`;
+
   try {
-    // เปิดใช้งาน Barcode Detector API แบบ Native สำหรับ iOS 15+ เพื่อการสแกนที่เร็วและแม่นยำที่สุด
+    // ขั้นตอนที่ 1: ขออนุญาตกล้องก่อน (ทำให้ browser แสดง permission popup)
+    let cameras = [];
+    try {
+      cameras = await Html5Qrcode.getCameras();
+    } catch (permErr) {
+      throw new Error("NotAllowedError: " + String(permErr));
+    }
+
+    if (!cameras || cameras.length === 0) {
+      throw new Error("ไม่พบกล้องบนอุปกรณ์นี้");
+    }
+
+    reader.innerHTML = `<div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>`;
+
+    // ขั้นตอนที่ 2: สร้าง Scanner Instance
     html5QrCode = new Html5Qrcode("reader", { 
-      experimentalFeatures: { useBarCodeDetectorIfSupported: true } 
+      experimentalFeatures: { useBarCodeDetectorIfSupported: true },
+      verbose: false
     });
     
     const formats = [
@@ -1361,55 +1377,138 @@ async function startScanner() {
       Html5QrcodeSupportedFormats.DATA_MATRIX,
     ];
 
-    // ปรับขนาดกรอบ (qrbox) ให้เป็นสี่เหลี่ยมจัตุรัสขนาดใหญ่ (85% ของจอ)
+    // Config: ไม่ใส่ aspectRatio (สาเหตุหลักที่ Safari เด้ง OverconstrainedError)
     const config = { 
-      fps: 30, // เพิ่มเป็น 30 FPS เพื่อให้กล้องจับภาพและสแกนได้เร็วขึ้น
+      fps: 15,
       qrbox: function(viewfinderWidth, viewfinderHeight) {
         let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
-        let boxSize = Math.floor(minEdgeSize * 0.85); 
+        let boxSize = Math.floor(minEdgeSize * 0.80); 
         return { width: boxSize, height: boxSize }; 
       }, 
-      formatsToSupport: formats, 
-      aspectRatio: 1.0, 
+      formatsToSupport: formats,
       disableFlip: false 
     };
 
-    // ตั้งค่าความละเอียดสูง (HD) เพื่อให้อ่านบาร์โค้ด 2 มิติ (Data Matrix, QR Code) ได้คมชัด
-    // และใส่ advanced constraint สำหรับ Auto Focus บน Android (iOS จะข้ามอันที่ตัวเองไม่รองรับ)
-    const videoConstraints = {
-      facingMode: "environment",
-      width: { ideal: 1280, max: 1920 },
-      height: { ideal: 720, max: 1080 },
-      advanced: [{ focusMode: "continuous" }]
-    };
+    // ขั้นตอนที่ 3: ลองเปิดกล้อง (3 ระดับ fallback)
+    let started = false;
 
-    try {
-      await html5QrCode.start(videoConstraints, config, onScanSuccess, () => {});
-    } catch (constraintErr) {
-      // Fallback เผื่อ Safari บน iOS บางเวอร์ชั่นเตะ Constraints ทิ้ง
-      console.warn("Advanced constraints failed, falling back to simple environment mode", constraintErr);
-      await html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, () => {});
+    // ลำดับ 1: ใช้ facingMode environment อย่างง่าย (ใช้ได้ทั้ง Safari, Chrome, Android)
+    if (!started) {
+      try {
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          config,
+          onScanSuccess,
+          () => {}
+        );
+        started = true;
+        console.log("Camera started with facingMode: environment");
+      } catch(e1) {
+        console.warn("Fallback 1 failed (facingMode environment):", e1);
+      }
     }
-    
+
+    // ลำดับ 2: ใช้ facingMode user (กล้องหน้า — เผื่อเครื่องไม่มีกล้องหลัง เช่น PC)
+    if (!started) {
+      try {
+        // ต้องสร้าง instance ใหม่เพราะตัวเก่าอาจค้าง
+        try { await html5QrCode.clear(); } catch(ce){}
+        html5QrCode = new Html5Qrcode("reader", { 
+          experimentalFeatures: { useBarCodeDetectorIfSupported: true },
+          verbose: false
+        });
+        await html5QrCode.start(
+          { facingMode: "user" },
+          config,
+          onScanSuccess,
+          () => {}
+        );
+        started = true;
+        console.log("Camera started with facingMode: user");
+      } catch(e2) {
+        console.warn("Fallback 2 failed (facingMode user):", e2);
+      }
+    }
+
+    // ลำดับ 3: ใช้ deviceId ตรงๆ ของกล้องตัวแรกที่เจอ
+    if (!started && cameras.length > 0) {
+      try {
+        try { await html5QrCode.clear(); } catch(ce){}
+        html5QrCode = new Html5Qrcode("reader", { 
+          experimentalFeatures: { useBarCodeDetectorIfSupported: true },
+          verbose: false
+        });
+        // เลือกกล้องหลัง (ชื่อมักมี "back" หรือ "environment") ก่อน
+        let backCam = cameras.find(c => /back|rear|environment/i.test(c.label));
+        let selectedCam = backCam || cameras[cameras.length - 1]; // กล้องตัวสุดท้ายมักเป็นกล้องหลัง
+        await html5QrCode.start(
+          { deviceId: { exact: selectedCam.id } },
+          config,
+          onScanSuccess,
+          () => {}
+        );
+        started = true;
+        console.log("Camera started with deviceId:", selectedCam.label);
+      } catch(e3) {
+        console.warn("Fallback 3 failed (deviceId):", e3);
+      }
+    }
+
+    if (!started) {
+      throw new Error("ไม่สามารถเปิดกล้องได้ในทุกโหมด — กรุณาตรวจสอบสิทธิ์กล้องและลองอีกครั้ง");
+    }
+
     isScanning = true;
     document.getElementById("btn-start").classList.add("hidden");
     document.getElementById("btn-stop").classList.remove("hidden");
+
+    // ขั้นตอนที่ 4: ลองตั้ง focusMode continuous (สำหรับ Android) — ทำหลัง start เพื่อไม่ให้เป็นอุปสรรคต่อ Safari
+    try {
+      const videoTrack = html5QrCode.getRunningTrackSettings && html5QrCode.getRunningTrackSettings();
+      if (!videoTrack) {
+        // ลองดึง track จาก video element ตรงๆ
+        const videoEl = document.querySelector("#reader video");
+        if (videoEl && videoEl.srcObject) {
+          const tracks = videoEl.srcObject.getVideoTracks();
+          if (tracks.length > 0) {
+            const capabilities = tracks[0].getCapabilities ? tracks[0].getCapabilities() : {};
+            if (capabilities.focusMode && capabilities.focusMode.includes("continuous")) {
+              await tracks[0].applyConstraints({ advanced: [{ focusMode: "continuous" }] });
+              console.log("✅ Continuous focus enabled");
+            }
+          }
+        }
+      }
+    } catch(focusErr) {
+      // ไม่เป็นไร — iOS/Safari ไม่รองรับ focusMode ก็ข้ามไปเฉยๆ
+      console.log("Focus mode not supported on this device, skipping");
+    }
+
   } catch(err) {
     let errMsg = "ไม่สามารถเปิดกล้องได้";
-    if (String(err).includes("NotAllowedError") || String(err).includes("Permission")) {
-      errMsg = "กรุณาอนุญาตให้ใช้งานกล้องในเบราว์เซอร์";
+    const errStr = String(err);
+    if (errStr.includes("NotAllowedError") || errStr.includes("Permission")) {
+      errMsg = "กรุณาอนุญาตให้ใช้งานกล้องในเบราว์เซอร์ (ตั้งค่า → อนุญาตกล้อง)";
+    } else if (errStr.includes("ไม่พบกล้อง")) {
+      errMsg = "ไม่พบกล้องบนอุปกรณ์นี้";
     } else if (window.location.protocol === "file:") {
-      errMsg = "เบราว์เซอร์ไม่อนุญาตให้เปิดกล้องจากไฟล์ (file://) กรุณาอัปโหลดขึ้นเซิร์ฟเวอร์ (HTTPS) หรือใช้ Localhost";
+      errMsg = "กล้องต้องใช้ HTTPS เท่านั้น — กรุณาอัปโหลดขึ้นเซิร์ฟเวอร์ หรือใช้ localhost";
+    } else if (errStr.includes("OverconstrainedError")) {
+      errMsg = "กล้องไม่รองรับการตั้งค่าที่ระบุ — กรุณาลองอีกครั้ง";
     }
     showError(errMsg);
     console.error("Camera Error:", err);
-    reader.innerHTML = `<div class="scanner-placeholder"><div class="big-icon">📷</div><p>ลองใช้ "รูปภาพ" แทน</p><p style="color:red;font-size:11px;margin-top:5px;">${escHtml(errMsg)}</p></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>`;
+    // Clean up
+    if (html5QrCode) { try { await html5QrCode.clear(); } catch(ce){} }
+    html5QrCode = null;
+    reader.innerHTML = `<div class="scanner-placeholder"><div class="big-icon">📷</div><p style="font-size:14px;font-weight:600;color:var(--text);">ไม่สามารถเปิดกล้องได้</p><p style="color:red;font-size:12px;margin-top:8px;">${escHtml(errMsg)}</p><p style="color:var(--text-muted);font-size:11px;margin-top:10px;">💡 ลองเปิดใน Chrome หรือ Safari บนมือถือ<br>และอนุญาตสิทธิ์กล้องในเบราว์เซอร์</p></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>`;
   }
 }
 
 async function stopScanner() {
   if (!html5QrCode || !isScanning) return;
-  try { await html5QrCode.stop(); await html5QrCode.clear(); } catch(e){}
+  try { await html5QrCode.stop(); } catch(e){}
+  try { await html5QrCode.clear(); } catch(e){}
   html5QrCode = null; isScanning = false; isProcessing = false;
   document.getElementById("btn-start").classList.remove("hidden");
   document.getElementById("btn-stop").classList.add("hidden");
