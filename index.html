@@ -1316,6 +1316,46 @@ input[type="file"] { display: none; }
   </div>
 </div>
 
+<!-- Modal Unreg Exists -->
+<div id="modal-unreg-exists" class="modal-overlay hidden" onclick="closeUnregExistsModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header" style="background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);">
+      <div class="modal-title-row">
+        <span class="modal-icon">⚠️</span>
+        <div>
+          <div class="modal-title">สินค้านอกระบบมีอยู่ในระบบแล้ว</div>
+          <div class="modal-subtitle" id="unreg-exists-assetno" style="color:#fef3c7;font-size:16px;font-weight:800;margin-top:2px;"></div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeUnregExistsModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-grid">
+        <div class="modal-field modal-field-full">
+          <div class="modal-label">ชื่อทรัพย์สิน / พื้นที่</div>
+          <div class="modal-value" id="unreg-exists-name"></div>
+        </div>
+        <div class="modal-field">
+          <div class="modal-label">หมวดหมู่</div>
+          <div class="modal-value" id="unreg-exists-cat"></div>
+        </div>
+        <div class="modal-field">
+          <div class="modal-label">คลัง / พื้นที่ย่อย</div>
+          <div class="modal-value" id="unreg-exists-wh"></div>
+        </div>
+        <div class="modal-field modal-field-full">
+          <div class="modal-label">หมายเหตุ</div>
+          <div class="modal-value" id="unreg-exists-remark" style="color:var(--danger)"></div>
+        </div>
+      </div>
+      <p style="margin-top: 16px; font-size: 13px; color: var(--text-dim); text-align: center;">ข้อมูลนี้ถูกแจ้งเป็นสินค้านอกระบบไว้เรียบร้อยแล้ว<br><b>เพื่อป้องกันข้อมูลซ้ำซ้อน ไม่จำเป็นต้องเพิ่มหรือนับสต๊อกซ้ำครับ</b></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeUnregExistsModal()" style="width:100%;">รับทราบ / สแกนต่อ</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal Scan Confirm -->
 <div id="modal-scan-confirm" class="modal-overlay hidden" onclick="closeScanConfirmModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
@@ -1645,6 +1685,35 @@ function closeScanConfirmModal() {
   }
 }
 
+function showUnregExistsModal(data) {
+  document.getElementById("unreg-exists-assetno").textContent = data.assetNo || "-";
+  document.getElementById("unreg-exists-name").textContent = data.assetName || "-";
+  document.getElementById("unreg-exists-cat").textContent = data.category || "-";
+  document.getElementById("unreg-exists-wh").textContent = (data.warehouse || "-") + " / " + (data.area || "-");
+  document.getElementById("unreg-exists-remark").textContent = data.remark || "-";
+  
+  document.getElementById("modal-unreg-exists").classList.remove("hidden");
+}
+
+function closeUnregExistsModal() {
+  document.getElementById("modal-unreg-exists").classList.add("hidden");
+  if (currentPage === "handheld") {
+    setTimeout(() => {
+      const hhInput = document.getElementById("handheld-input");
+      if (hhInput) {
+        hhInput.value = "";
+        hhInput.focus();
+      }
+    }, 100);
+  } else if (currentPage === "scan") {
+    if (html5QrCode && isScanning) {
+      setTimeout(() => {
+        try { html5QrCode.resume(); } catch(e){}
+      }, 500);
+    }
+  }
+}
+
 async function compressImageToBase64(file, maxSizeMB = 0.3) { // ปรับเป็น 0.3MB (300KB) เพื่อให้เร็วที่สุด
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -1886,14 +1955,10 @@ async function onScanSuccess(decodedText, isHandheld = false) {
           category: unregMatch[2],
           warehouse: unregMatch[3],
           area: unregMatch[4],
-          isUnregistered: true
+          remark: unregMatch[5]
         };
-        showSuccess(data);
-        
-        setTimeout(async () => {
-          isProcessing = false;
-          if (html5QrCode && isScanning && !isHandheld) { try { await html5QrCode.resume(); } catch(e){} }
-        }, isHandheld ? 100 : 1500);
+        showUnregExistsModal(data);
+        isProcessing = false;
         return;
       }
     }
