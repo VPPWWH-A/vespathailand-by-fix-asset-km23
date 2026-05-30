@@ -1228,6 +1228,15 @@ input[type="file"] { display: none; }
           </select>
         </div>
       </div>
+      <div class="form-field">
+        <label>สถานะ</label>
+        <select id="manual-status">
+          <option value="ใช้งานอยู่">ใช้งานอยู่</option>
+          <option value="ไม่ได้ใช้งาน">ไม่ได้ใช้งาน</option>
+          <option value="ชำรุดเสียหาย">ชำรุดเสียหาย</option>
+          <option value="ซ่อมบำรุง">ซ่อมบำรุง</option>
+        </select>
+      </div>
       <!-- Upload Image Section -->
       <div style="margin-top:12px;border:1px dashed var(--border);padding:16px;border-radius:8px;text-align:center;">
         <input type="file" id="manual-image" accept="image/*" capture="environment" onchange="previewManualImage(event)">
@@ -3177,6 +3186,7 @@ async function submitManualAdd() {
   const category  = document.getElementById("manual-category").value;
   const group     = document.getElementById("manual-loc-group").value;
   const zone      = document.getElementById("manual-area").value;
+  const status    = document.getElementById("manual-status").value;
   const remarks   = "";
   if (!category) {
     alert("กรุณาเลือกหมวดหมู่ทรัพย์สิน");
@@ -3208,6 +3218,7 @@ async function submitManualAdd() {
       category: category,
       warehouse: group, // ส่งโซนหลักไปที่คอลัมน์ Warehouse
       area: zone,       // ส่งพื้นที่ย่อยไปที่คอลัมน์ Area
+      status: status,
       remarks: remarks
     };
 
@@ -3230,7 +3241,7 @@ async function submitManualAdd() {
       `);
       
       const newUnregRow = [
-        data.tempId, assetName, category, group, zone, remarks, new Date().toISOString(), data.fileUrl || "", "Pending"
+        data.tempId, assetName, category, group, zone, remarks, new Date().toISOString(), data.fileUrl || "", "Pending", status
       ];
       if (typeof allUnregAssets !== 'undefined') {
         allUnregAssets.unshift(newUnregRow);
