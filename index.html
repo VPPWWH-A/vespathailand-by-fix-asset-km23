@@ -1774,17 +1774,14 @@ function escHtml(str) {
 
 let pendingScanData = null;
 
-function showSuccess(data) {
+function showStockCountModal(data) {
   pendingScanData = data;
   let statusText = "พบข้อมูลทรัพย์สิน — รอยืนยันการนับ";
   let badgeHtml = `<span style="display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:999px;font-size:11px;font-weight:700;margin-top:10px;text-transform:uppercase;background:#dbeafe;color:var(--primary);">✅ รอยืนยันการนับ</span>`;
   const hasRealPhoto = !!(data.imageUrl || data.fileUrl || data.photoUrl || data.image);
   const isDamagedLabel = String(data.assetStatus || data.status || "").includes("ชำรุดเสียหาย") && hasRealPhoto;
 
-  if (data.isUnregistered) {
-    statusText = "พบสินค้านอกระบบ (รอยืนยัน)";
-    badgeHtml = `<span style="display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:999px;font-size:11px;font-weight:700;margin-top:10px;text-transform:uppercase;background:#fef9c3;color:#854d0e;">⚠️ สินค้านอกระบบ (NEW)</span>`;
-  } else if (isAlreadyCounted(data)) {
+  if (isAlreadyCounted(data)) {
     statusText = "พบข้อมูลทรัพย์สิน (นับแล้วในรอบนี้)";
     badgeHtml = `<span style="display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:999px;font-size:11px;font-weight:700;margin-top:10px;text-transform:uppercase;background:#dcfce7;color:var(--success);">✅ นับแล้ว (Count)</span>`;
   } else if (currentPage === "dashboard" && currentPillar === "count" && isDamagedLabel) {
@@ -1800,14 +1797,12 @@ function showSuccess(data) {
       ${badgeHtml}
     </div>`);
 
-  // Populate modal
   document.getElementById("scan-confirm-assetno").textContent = data.assetNo;
   document.getElementById("scan-confirm-name").textContent = data.assetName || "-";
   document.getElementById("scan-confirm-cat").textContent = data.category || "-";
   document.getElementById("scan-confirm-area").textContent = data.area || "-";
   document.getElementById("scan-confirm-wh").textContent = data.warehouse || "-";
 
-  // Reset update fields
   document.getElementById("scan-update-warehouse").value = "";
   document.getElementById("scan-update-area").innerHTML = '<option value="">ไม่เปลี่ยน</option>';
   document.getElementById("scan-update-status").value = "";
@@ -1822,7 +1817,11 @@ function showSuccess(data) {
   document.getElementById("modal-scan-confirm").classList.remove("hidden");
 }
 
-function closeScanConfirmModal() {
+function showSuccess(data) {
+  return showStockCountModal(data);
+}
+
+function closeScanConfirmModal()function closeScanConfirmModal() {
   document.getElementById("modal-scan-confirm").classList.add("hidden");
   if (currentPage === "handheld") {
     setTimeout(() => {
