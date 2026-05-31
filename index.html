@@ -1627,8 +1627,10 @@ async function refreshCurrentView() {
         renderUnregTable();
       }
 
-      if (currentPage === "dashboard") {
-        loadDashboard(true, true);
+      await loadDashboard(true, true);
+
+      if (currentPage === "scan" && html5QrCode && isScanning && !isProcessing) {
+        try { await html5QrCode.resume(); } catch (e) {}
       }
     }
   } finally {
