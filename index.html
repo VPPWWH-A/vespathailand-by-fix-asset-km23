@@ -1775,6 +1775,10 @@ function escHtml(str) {
 let pendingScanData = null;
 
 function showStockCountModal(data) {
+  if (data && data.isUnregistered) {
+    showUnregExistsModal(data);
+    return;
+  }
   pendingScanData = data;
   let statusText = "พบข้อมูลทรัพย์สิน — รอยืนยันการนับ";
   let badgeHtml = `<span style="display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:999px;font-size:11px;font-weight:700;margin-top:10px;text-transform:uppercase;background:#dbeafe;color:var(--primary);">✅ รอยืนยันการนับ</span>`;
@@ -3451,17 +3455,13 @@ async function submitManualAdd() {
     } else if (!masterAsset && data && data.status === "success") {
       const assetInfo = data || {};
       closeManualAddModal();
-      showSuccess({
+      showUnregExistsModal({
         assetNo: assetInfo.assetNo || assetNo,
         assetName: assetInfo.assetName || assetName,
         category: assetInfo.category || category,
         area: assetInfo.area || zone,
         warehouse: assetInfo.warehouse || group,
-        acquisitionDate: assetInfo.acquisitionDate || "",
-        assetStatus: assetInfo.assetStatus || status,
-        lastScan: assetInfo.lastScan || "",
-        lastResult: assetInfo.lastResult || "",
-        isUnregistered: true
+        remark: remarks
       });
       
       if (assetInfo.tempId || data.tempId) {
