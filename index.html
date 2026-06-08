@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
@@ -16,43 +16,41 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 <style>
 :root {
-  --bg: #f4f1ea;
-  --bg-card: rgba(255,255,255,0.88);
-  --border: rgba(25, 53, 69, 0.12);
-  --border-light: rgba(25, 53, 69, 0.06);
-  --text: #163041;
-  --text-dim: #476172;
-  --text-muted: #6f8694;
-  --primary: #0f5d73;
-  --primary-light: #16819d;
-  --primary-bg: #d8eef4;
-  --success: #1d7f5f;
-  --success-bg: #dbf2e9;
-  --warning: #b36a1c;
-  --warning-bg: #f8e4c3;
-  --danger: #b6423c;
-  --danger-bg: #f7dbd9;
-  --gold: #b5892b;
-  --shadow: 0 10px 30px rgba(16, 38, 49, 0.08);
-  --shadow-lg: 0 20px 50px rgba(16, 38, 49, 0.16);
-  --radius: 22px;
-  --radius-sm: 12px;
-  --radius-lg: 30px;
+  --bg: #f8fafc; /* Slate 50 */
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9; /* Slate 100 */
+  --border: #e2e8f0; /* Slate 200 */
+  --border-light: #f1f5f9; /* Slate 100 */
+  --text: #0f172a; /* Slate 900 */
+  --text-dim: #475569; /* Slate 700 */
+  --text-muted: #94a3b8; /* Slate 400 */
+  --primary: #0284c7; /* Sky 600 - clean blue */
+  --primary-light: #38bdf8; /* Sky 400 */
+  --primary-bg: rgba(2, 132, 199, 0.08);
+  --success: #059669; /* Emerald 600 */
+  --success-bg: rgba(5, 150, 105, 0.08);
+  --warning: #d97706; /* Amber 600 */
+  --warning-bg: rgba(217, 119, 6, 0.08);
+  --danger: #dc2626; /* Red 600 */
+  --danger-bg: rgba(220, 38, 38, 0.08);
+  --gold: #b45309;
+  --shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 20px;
 }
 
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
   font-size: 14px;
-  background-image:
-    radial-gradient(circle at top left, rgba(22,129,157,0.18), transparent 28%),
-    radial-gradient(circle at top right, rgba(181,137,43,0.16), transparent 24%),
-    linear-gradient(180deg, #f8f5ef 0%, #f1ece3 100%);
+  background-image: radial-gradient(circle at 50% 0%, #f1f5f9 0%, #f8fafc 100%);
+  background-attachment: fixed;
 }
 
 /* ===== TOP BAR ===== */
@@ -532,26 +530,46 @@ body {
 
 .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
 .btn {
-  padding: 12px;
+  padding: 10px 16px;
   border: none;
   border-radius: var(--radius-sm);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+  min-width: 90px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
 }
-.btn:active { transform: scale(0.97); }
-.btn-primary   { background: var(--primary); color: white; }
-.btn-primary:hover { background: var(--primary-light); }
-.btn-secondary { background: var(--bg); color: var(--text-dim); border: 1px solid var(--border); }
-.btn-gold      { background: var(--gold);    color: white; }
-.btn-danger    { background: var(--danger);  color: white; }
-.btn-success   { background: var(--success); color: white; }
-.btn-full { grid-column: 1 / -1; }
+.btn:active { transform: scale(0.96); }
+.btn-primary { background: var(--primary); color: #ffffff; }
+.btn-primary:hover:not(:disabled) { background: var(--primary-light); box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15); }
+.btn-secondary { background: #ffffff; color: var(--text-dim); border: 1px solid var(--border); }
+.btn-secondary:hover:not(:disabled) { background: var(--bg-card-hover); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.btn-gold { background: var(--gold); color: white; }
+.btn-gold:hover:not(:disabled) { background: #92400e; box-shadow: 0 4px 12px rgba(180, 83, 9, 0.15); }
+.btn-danger { background: rgba(220, 38, 38, 0.06); color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.12); }
+.btn-danger:hover:not(:disabled) { background: #dc2626; color: #fff; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15); }
+.btn-success { background: var(--success); color: #ffffff; }
+.btn-success:hover:not(:disabled) { background: #047857; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15); }
+.btn-full { grid-column: 1 / -1; width: 100%; }
+.btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none !important; }
+
+/* Spinner style for button loading */
+.spinner-sm {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+}
 
 .result-card {
   background: var(--bg-card);
@@ -805,6 +823,66 @@ input[type="file"] { display: none; }
   .main-content { padding: 16px 16px 100px; }
 }
 
+/* Home Grid Menu Cards */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 10px;
+}
+.home-card {
+  min-height: 180px;
+  border-radius: var(--radius);
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.home-card:active {
+  transform: scale(0.96);
+}
+.home-card.blue {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.2);
+}
+.home-card.green {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.2);
+}
+.home-card.orange {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.2);
+}
+.home-card.amber {
+  background: linear-gradient(135deg, #ca8a04 0%, #a16207 100%);
+  box-shadow: 0 4px 14px rgba(202, 138, 4, 0.2);
+}
+.home-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  transition: transform 0.2s;
+  color: #ffffff;
+}
+.home-card:hover .home-card-icon {
+  transform: scale(1.1);
+}
+.home-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
 </style>
 <base target="_blank">
 </head>
@@ -831,8 +909,8 @@ input[type="file"] { display: none; }
         <button class="action-btn" onclick="clearDateFilter()" title="ล้างวันที่" style="padding:8px 10px;">✕</button>
       </div>
       <div class="action-btns">
-        <button class="action-btn" onclick="exportExcel()">📊 Excel</button>
-        <button class="action-btn primary" onclick="window.print()">🖨️ Print</button>
+        <button class="action-btn" onclick="exportExcel()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>Excel</button>
+        <button class="action-btn primary" onclick="window.print()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>Print</button>
       </div>
     </div>
   </div>
@@ -846,31 +924,40 @@ input[type="file"] { display: none; }
     <div style="padding: 20px; text-align: center; margin-top: 10px;">
       <h2 style="font-size: 28px; font-weight: 900; color: var(--primary); margin-bottom: 24px;">เมนูหลัก (Home)</h2>
       
-      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;">
-        <div onclick="showPage('handheld')" style="min-height: 180px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: var(--radius); padding: 20px 16px; text-align: center; box-shadow: 0 4px 12px rgba(37,99,235,0.2); cursor: pointer; color: white; display: flex; flex-direction: column; justify-content: center;">
-          <div style="font-size: 42px; margin-bottom: 8px;">📟</div>
-          <div style="font-size: 18px; font-weight: 800;">1. Handheld</div>
+      <div class="home-grid">
+        <div onclick="showPage('handheld')" class="home-card blue">
+          <div class="home-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line><path d="M9 6h6"></path><path d="M9 10h6"></path><path d="M9 14h6"></path></svg>
+          </div>
+          <div class="home-card-title">1. Handheld Mode</div>
         </div>
 
-        <div onclick="showPage('scan')" style="min-height: 180px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: var(--radius); padding: 20px 16px; text-align: center; box-shadow: 0 4px 12px rgba(16,185,129,0.2); cursor: pointer; color: white; display: flex; flex-direction: column; justify-content: center;">
-          <div style="font-size: 42px; margin-bottom: 8px;">📷</div>
-          <div style="font-size: 18px; font-weight: 800;">2. Camera</div>
+        <div onclick="showPage('scan')" class="home-card green">
+          <div class="home-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+          </div>
+          <div class="home-card-title">2. Camera Scan</div>
         </div>
 
-        <div onclick="openManualAddModal()" style="min-height: 180px; background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%); border-radius: var(--radius); padding: 20px 16px; text-align: center; box-shadow: 0 4px 12px rgba(180,83,9,0.2); cursor: pointer; color: white; display: flex; flex-direction: column; justify-content: center;">
-          <div style="font-size: 42px; margin-bottom: 8px;">⚠️</div>
-          <div style="font-size: 18px; font-weight: 800;">3. สินค้าบาร์โค้ตเสียหาย</div>
+        <div onclick="openManualAddModal()" class="home-card orange">
+          <div class="home-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          </div>
+          <div class="home-card-title">3. สินค้านอกระบบ</div>
         </div>
 
-        <div onclick="showPage('dashboard')" style="min-height: 180px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: var(--radius); padding: 20px 16px; text-align: center; box-shadow: 0 4px 12px rgba(245,158,11,0.2); cursor: pointer; color: white; display: flex; flex-direction: column; justify-content: center;">
-          <div style="font-size: 42px; margin-bottom: 8px;">📊</div>
-          <div style="font-size: 18px; font-weight: 800;">4. Dashboard</div>
+        <div onclick="showPage('dashboard')" class="home-card amber">
+          <div class="home-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          </div>
+          <div class="home-card-title">4. Dashboard</div>
         </div>
       </div>
 
-      <div onclick="refreshCurrentView()" style="margin-top: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; text-align: center; box-shadow: var(--shadow); cursor: pointer; color: var(--text-dim); font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px;">
-        <span style="font-size: 18px;">🔄</span> รีเฟรชหน้าโฮม
-      </div>
+      <button class="btn btn-secondary btn-full" onclick="refreshCurrentView()" style="margin-top: 20px; padding: 14px; font-size: 13px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        รีเฟรชหน้าโฮม
+      </button>
     </div>
   </div>
 
@@ -887,11 +974,11 @@ input[type="file"] { display: none; }
       </div>
     </div>
     <div class="btn-group">
-      <button id="btn-start" class="btn btn-primary btn-full" onclick="startScanner()">📷 เปิดกล้องสแกน</button>
-      <button id="btn-stop" class="btn btn-danger btn-full hidden" onclick="stopScanner()">⏹️ ปิดกล้อง</button>
-      <button class="btn btn-primary btn-full" onclick="openManualAddModal()" style="margin-top:4px;">➕ สินค้าบาร์โค้ดเสียหาย / สแกนไม่ได้</button>
-      <button class="btn btn-secondary btn-full" onclick="refreshCurrentView()" style="margin-top:4px;">🔄 รีเฟรชแอป</button>
-      <button class="btn btn-gold btn-full" onclick="showInstallModal()" style="margin-top:4px; font-weight: bold;">📲 นำแอปลงหน้าจอหลัก (Install)</button>
+      <button id="btn-start" class="btn btn-primary btn-full" onclick="startScanner()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>เปิดกล้องสแกน</button>
+      <button id="btn-stop" class="btn btn-danger btn-full hidden" onclick="stopScanner()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect></svg>ปิดกล้อง</button>
+      <button class="btn btn-primary btn-full" onclick="openManualAddModal()" style="margin-top:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>สินค้านอกระบบ</button>
+      <button class="btn btn-secondary btn-full" onclick="refreshCurrentView()" style="margin-top:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>รีเฟรชแอป</button>
+      <button class="btn btn-gold btn-full" onclick="showInstallModal()" style="margin-top:4px; font-weight: bold;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>นำแอปลงหน้าจอหลัก (Install)</button>
     </div>
     <div id="result"></div>
   </div>
@@ -903,7 +990,7 @@ input[type="file"] { display: none; }
       <h2 style="font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 6px;">โหมดเครื่องสแกน Handheld</h2>
       <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">หน้าจอนี้ออกแบบมาเพื่อการสแกนที่รวดเร็ว</p>
       
-      <button class="btn btn-secondary" onclick="refreshCurrentView()" style="margin: 0 auto 16px; display: inline-flex;"><span class="icon">🔄</span> รีเฟรชหน้าจอ</button>
+      <button class="btn btn-secondary" onclick="refreshCurrentView()" style="margin: 0 auto 16px; display: inline-flex;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>รีเฟรชหน้าจอ</button>
 
       <input type="text" id="handheld-input" style="width: 100%; padding: 20px; border: 3px solid var(--primary); border-radius: var(--radius); font-size: 24px; text-align: center; background: var(--bg); color: var(--text); font-weight: 900; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);" placeholder="ยิงสแกนบาร์โค้ดที่นี่..." autocomplete="off">
       
@@ -976,8 +1063,8 @@ input[type="file"] { display: none; }
         </select>
       </div>
       <div class="btn-group" style="margin-top:12px;">
-        <button class="btn btn-success btn-full" onclick="submitAdd()">💾 บันทึก</button>
-        <button class="btn btn-secondary btn-full" onclick="showPage('scan')">❌ ยกเลิก</button>
+        <button class="btn btn-success btn-full" onclick="submitAdd()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>บันทึก</button>
+        <button class="btn btn-secondary btn-full" onclick="showPage('scan')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>ยกเลิก</button>
       </div>
     </div>
   </div>
@@ -999,8 +1086,8 @@ input[type="file"] { display: none; }
         <canvas id="label-canvas" width="600" height="380"></canvas>
       </div>
       <div class="btn-group" style="margin-top:12px;">
-        <button class="btn btn-primary btn-full" onclick="printLabel()">🖨️ พิมพ์ / บันทึก PNG</button>
-        <button class="btn btn-secondary btn-full" onclick="showPage('dashboard')">❌ ยกเลิก</button>
+        <button class="btn btn-primary btn-full" onclick="printLabel()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>พิมพ์ / บันทึก PNG</button>
+        <button class="btn btn-secondary btn-full" onclick="showPage('dashboard')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>ยกเลิก</button>
       </div>
     </div>
   </div>
@@ -1011,17 +1098,26 @@ input[type="file"] { display: none; }
     <div class="dash-action-bar">
       <h3>สรุปผลการตรวจนับ</h3>
       <button class="refresh-btn" id="refresh-btn" onclick="loadDashboard(false, true)">
-        <span class="refresh-icon">🔄</span> รีเฟรช
+        <span class="refresh-icon" style="display:inline-flex; align-items:center; justify-content:center;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        </span>
+        รีเฟรช
       </button>
     </div>
 
     <!-- Pillar Nav -->
     <div class="pillar-nav">
       <button class="pillar-btn active" id="pillar-count" onclick="setPillar('count')">
-        <span class="icon">📊</span><span class="label">Stock Count</span>
+        <span class="icon" style="display:inline-flex; align-items:center; justify-content:center; margin-right:4px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        </span>
+        <span class="label">Stock Count</span>
       </button>
       <button class="pillar-btn" id="pillar-unreg" onclick="setPillar('unreg')">
-        <span class="icon">⚠️</span><span class="label">Unregistered</span>
+        <span class="icon" style="display:inline-flex; align-items:center; justify-content:center; margin-right:4px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        </span>
+        <span class="label">Unregistered</span>
       </button>
     </div>
 
@@ -1099,7 +1195,7 @@ input[type="file"] { display: none; }
 
     <!-- Warehouse Filter -->
     <div class="tab-bar" id="warehouse-filter-bar" style="margin-top:0; border-top:1px solid var(--border-light); padding-top:6px; gap:4px;">
-      <button class="tab-btn wh-btn active" onclick="setWarehouse('all', this)" style="font-size:11px; padding:6px 10px;">🏢 ทั้งหมด</button>
+      <button class="tab-btn wh-btn active" onclick="setWarehouse('all', this)" style="font-size:11px; padding:6px 10px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px; display:inline-block; vertical-align:middle;"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line><line x1="9" y1="16" x2="15" y2="16"></line><path d="M9 6h6"></path><path d="M9 10h6"></path></svg> ทั้งหมด</button>
       <button class="tab-btn wh-btn" onclick="setWarehouse('WH-A', this)" style="font-size:11px; padding:6px 10px;">WH-A</button>
       <button class="tab-btn wh-btn" onclick="setWarehouse('WH-B', this)" style="font-size:11px; padding:6px 10px;">WH-B</button>
       <button class="tab-btn wh-btn" onclick="setWarehouse('WHD', this)" style="font-size:11px; padding:6px 10px;">WHD</button>
@@ -1131,7 +1227,7 @@ input[type="file"] { display: none; }
     <div class="table-container hidden" id="table-unreg-container">
       <div style="padding: 12px; background: white; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
         <div style="font-weight: 700; color: var(--text);">รายการสินค้าที่รอการยืนยัน (Unregistered)</div>
-        <button id="btn-confirm-all" class="btn btn-success" onclick="confirmAllUnreg()" style="padding: 6px 12px; font-size: 13px; font-weight: bold; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">✅ Approve ALL</button>
+        <button id="btn-confirm-all" class="btn btn-success" onclick="confirmAllUnreg()" style="padding: 6px 12px; font-size: 13px; font-weight: bold; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg> Approve ALL</button>
       </div>
       <div class="table-header unreg">
         <div class="cell">วันที่เพิ่ม</div>
@@ -1155,7 +1251,9 @@ input[type="file"] { display: none; }
   <div class="modal-box" onclick="event.stopPropagation()">
     <div class="modal-header">
       <div class="modal-title-row">
-        <span class="modal-icon">📋</span>
+        <span class="modal-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        </span>
         <div>
           <div class="modal-title">รายละเอียดทรัพย์สิน</div>
           <div class="modal-subtitle" id="modal-asset-no">-</div>
@@ -1207,8 +1305,14 @@ input[type="file"] { display: none; }
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-danger" onclick="printModalLabel()">🖨️ พิมพ์ Label</button>
-      <button class="btn btn-secondary" onclick="closeModal()">ปิด</button>
+      <button class="btn btn-primary" onclick="printModalLabel()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        พิมพ์ Label
+      </button>
+      <button class="btn btn-secondary" onclick="closeModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        ปิด
+      </button>
     </div>
   </div>
 </div>
@@ -1216,12 +1320,14 @@ input[type="file"] { display: none; }
 <!-- MANUAL ADD MODAL -->
 <div id="modal-manual-add" class="modal-overlay hidden" onclick="closeManualAddModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
-    <div class="modal-header" style="background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%);">
+    <div class="modal-header" style="background: #ffffff; border-bottom: 1px solid var(--border); color: var(--text);">
       <div class="modal-title-row">
-        <span class="modal-icon">📸</span>
+        <span class="modal-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--warning);"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+        </span>
         <div>
-          <div class="modal-title">บันทึกสินค้าบาร์โค้ดเสียหาย / นอกระบบ</div>
-          <div class="modal-subtitle" style="color:#fef3c7;font-size:12px;font-weight:400;margin-top:2px;">ถ่ายรูปและเพิ่มข้อมูลเข้าระบบ</div>
+          <div class="modal-title" style="color: var(--text-dim);">บันทึกสินค้าบาร์โค้ดเสียหาย / นอกระบบ</div>
+          <div class="modal-subtitle" style="color:var(--text-muted);font-size:12px;font-weight:400;margin-top:2px;">ถ่ายรูปและเพิ่มข้อมูลเข้าระบบ</div>
         </div>
       </div>
       <button class="modal-close" onclick="closeManualAddModal()">✕</button>
@@ -1275,51 +1381,67 @@ input[type="file"] { display: none; }
         </select>
       </div>
       <!-- Upload Image Section -->
-      <div style="margin-top:12px;border:1px dashed var(--border);padding:16px;border-radius:8px;text-align:center;">
-        <input type="file" id="manual-image" accept="image/*" capture="environment" onchange="previewManualImage(event)">
+      <div style="margin-top:12px;border:1px dashed var(--border);padding:16px;border-radius:8px;text-align:center;background:#f8fafc;">
+        <input type="file" id="manual-image" accept="image/*" capture="environment" onchange="previewManualImage(event)" style="display:none;">
         <div id="manual-preview-container" class="hidden">
           <img id="manual-image-preview" style="max-width:100%;max-height:200px;border-radius:8px;margin-bottom:8px;">
-          <button class="btn btn-secondary btn-full" onclick="document.getElementById('manual-image').click()" style="padding:6px;font-size:12px;">🔄 ถ่ายใหม่ / เปลี่ยนรูป</button>
+          <button class="btn btn-secondary btn-full" onclick="document.getElementById('manual-image').click()" style="padding:8px;font-size:12px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            ถ่ายใหม่ / เปลี่ยนรูป
+          </button>
         </div>
         <div id="manual-upload-placeholder">
-          <button class="btn btn-primary" onclick="document.getElementById('manual-image').click()" style="margin:0 auto;width:auto;padding:10px 20px;">📷 เปิดกล้องถ่ายรูป</button>
+          <button class="btn btn-primary" onclick="document.getElementById('manual-image').click()" style="margin:0 auto;width:auto;padding:10px 20px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            เปิดกล้องถ่ายรูป
+          </button>
           <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">(จำเป็นต้องมีรูปภาพ)</div>
         </div>
       </div>
-
     </div>
     <div class="modal-footer">
-      <button class="btn btn-success" id="btn-manual-submit" onclick="submitManualAdd()">💾 บันทึกและอัปโหลด</button>
-      <button class="btn btn-secondary" onclick="closeManualAddModal()">ยกเลิก</button>
+      <button class="btn btn-success" id="btn-manual-submit" onclick="submitManualAdd()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+        บันทึกและอัปโหลด
+      </button>
+      <button class="btn btn-secondary" onclick="closeManualAddModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        ยกเลิก
+      </button>
     </div>
   </div>
 </div>
 
 <!-- Modal Approve Login -->
 <div id="modal-approve-login" class="modal-overlay hidden" onclick="closeApproveLoginModal()">
-  <div class="modal-box" style="max-width:350px;" onclick="event.stopPropagation()">
-    <div class="modal-header" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);">
+  <div class="modal-box" style="max-width:360px;" onclick="event.stopPropagation()">
+    <div class="modal-header" style="background: #ffffff; border-bottom: 1px solid var(--border); color: var(--text);">
       <div class="modal-title-row">
-        <span class="modal-icon">🔒</span>
+        <span class="modal-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </span>
         <div>
-          <div class="modal-title" style="color:white;">Admin Login</div>
-          <div class="modal-subtitle" style="color:#bbf7d0;font-size:12px;font-weight:400;margin-top:2px;">กรุณากรอกรหัสผ่านเพื่อยืนยันทั้งหมด</div>
+          <div class="modal-title" style="color: var(--text-dim);">เข้าสู่ระบบอนุมัติ (Admin Login)</div>
+          <div class="modal-subtitle" style="color:var(--text-muted);font-size:12px;font-weight:400;margin-top:2px;">กรุณากรอกรหัสผ่านเพื่อยืนยันทั้งหมด</div>
         </div>
       </div>
       <button class="modal-close" onclick="closeApproveLoginModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="form-group">
-        <label class="form-label">Username</label>
-        <input type="text" id="approve-username" class="form-control" placeholder="ชื่อผู้ใช้">
+      <div class="form-field">
+        <label>Username</label>
+        <input type="text" id="approve-username" class="auth-input" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); outline: none;" placeholder="ชื่อผู้ใช้">
       </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
-        <input type="password" id="approve-password" class="form-control" placeholder="รหัสผ่าน">
+      <div class="form-field" style="margin-top:10px;">
+        <label>Password</label>
+        <input type="password" id="approve-password" class="auth-input" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); outline: none;" placeholder="รหัสผ่าน" onkeydown="if(event.key==='Enter') submitApproveAll()">
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-success" id="btn-approve-login" onclick="submitApproveAll()" style="width:100%;">✅ Login & Approve</button>
+      <button class="btn btn-success" id="btn-approve-login" onclick="submitApproveAll()" style="width:100%;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+        เข้าสู่ระบบและอนุมัติ
+      </button>
     </div>
   </div>
 </div>
@@ -1329,12 +1451,14 @@ input[type="file"] { display: none; }
 <!-- Modal Install App -->
 <div id="modal-install" class="modal-overlay hidden" onclick="closeInstallModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
-    <div class="modal-header" style="background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);">
+    <div class="modal-header" style="background: #ffffff; border-bottom: 1px solid var(--border); color: var(--text);">
       <div class="modal-title-row">
-        <span class="modal-icon">📲</span>
+        <span class="modal-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+        </span>
         <div>
-          <div class="modal-title" style="color:white;">นำแอปลงหน้าจอหลัก</div>
-          <div class="modal-subtitle" style="color:#fef08a;font-size:12px;font-weight:400;margin-top:2px;">เพื่อการใช้งานที่สะดวกรวดเร็วแบบแอปพลิเคชัน</div>
+          <div class="modal-title" style="color: var(--text-dim);">นำแอปลงหน้าจอหลัก</div>
+          <div class="modal-subtitle" style="color:var(--text-muted);font-size:12px;font-weight:400;margin-top:2px;">เพื่อการใช้งานที่สะดวกรวดเร็วแบบแอปพลิเคชัน</div>
         </div>
       </div>
       <button class="modal-close" onclick="closeInstallModal()">✕</button>
@@ -1356,7 +1480,10 @@ input[type="file"] { display: none; }
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" style="width:100%;" onclick="closeInstallModal()">ปิดหน้าต่าง</button>
+      <button class="btn btn-secondary" style="width:100%;" onclick="closeInstallModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        ปิดหน้าต่าง
+      </button>
     </div>
   </div>
 </div>
@@ -1364,18 +1491,20 @@ input[type="file"] { display: none; }
 <!-- Modal Confirm Unreg -->
 <div id="modal-confirm-unreg" class="modal-overlay hidden" onclick="closeConfirmUnregModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
-    <div class="modal-header" style="background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);">
+    <div class="modal-header" style="background: #ffffff; border-bottom: 1px solid var(--border); color: var(--text);">
       <div class="modal-title-row">
-        <span class="modal-icon">✅</span>
+        <span class="modal-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success);"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </span>
         <div>
-          <div class="modal-title">ยืนยันเพิ่มข้อมูลเข้าสู่ระบบ</div>
-          <div class="modal-subtitle" style="color:#dcfce7;font-size:12px;font-weight:400;margin-top:2px;">ตรวจสอบข้อมูลก่อนบันทึก</div>
+          <div class="modal-title" style="color: var(--text-dim);">ยืนยันเพิ่มข้อมูลเข้าสู่ระบบ</div>
+          <div class="modal-subtitle" style="color:var(--text-muted);font-size:12px;font-weight:400;margin-top:2px;">ตรวจสอบข้อมูลก่อนบันทึก</div>
         </div>
       </div>
       <button class="modal-close" onclick="closeConfirmUnregModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div style="background:var(--bg); padding:12px; border-radius:8px; margin-bottom:16px;">
+      <div style="background:var(--bg); padding:12px; border-radius:8px; margin-bottom:16px; border: 1px solid var(--border);">
         <div style="margin-bottom:8px;"><strong>Temp ID:</strong> <span id="confirm-unreg-id"></span></div>
         <div style="margin-bottom:8px;"><strong>ชื่อทรัพย์สิน:</strong> <span id="confirm-unreg-name"></span></div>
         <div style="margin-bottom:8px;"><strong>หมวดหมู่:</strong> <span id="confirm-unreg-cat"></span></div>
@@ -1384,12 +1513,19 @@ input[type="file"] { display: none; }
       </div>
       <p id="confirm-unreg-text" style="margin:0; color:var(--text-dim); text-align:center; font-size:13px;">ระบบจะตรวจสอบข้อมูลก่อนเพิ่มเข้าระบบ<br>ยืนยันการทำรายการ?</p>
       <div id="confirm-unreg-duplicate-warning" class="hidden" style="margin-top:12px; padding:10px; background:#fee2e2; border:1px solid #f87171; border-radius:8px; color:#b91c1c; text-align:center; font-size:13px;">
-        ⚠️ <b>คำเตือน:</b> รหัสสินค้านี้มีในระบบแล้ว ไม่สามารถเพิ่มซ้ำได้
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; display:inline-block; vertical-align:middle;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        <b>คำเตือน:</b> รหัสสินค้านี้มีในระบบแล้ว ไม่สามารถเพิ่มซ้ำได้
       </div>
     </div>
     <div class="modal-footer" id="modal-confirm-unreg-footer">
-      <button class="btn btn-success" id="btn-confirm-unreg-submit">✅ ยืนยันข้อมูล</button>
-      <button class="btn btn-secondary" onclick="closeConfirmUnregModal()">ยกเลิก</button>
+      <button class="btn btn-success" id="btn-confirm-unreg-submit">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        ยืนยันข้อมูล
+      </button>
+      <button class="btn btn-secondary" onclick="closeConfirmUnregModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        ยกเลิก
+      </button>
     </div>
   </div>
 </div>
@@ -1397,12 +1533,14 @@ input[type="file"] { display: none; }
 <!-- Modal Unreg Exists -->
 <div id="modal-unreg-exists" class="modal-overlay hidden" onclick="closeUnregExistsModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
-    <div class="modal-header" style="background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);">
+    <div class="modal-header" style="background: #ffffff; border-bottom: 1px solid var(--border); color: var(--text);">
       <div class="modal-title-row">
-        <span class="modal-icon">⚠️</span>
+        <span class="modal-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--warning);"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        </span>
         <div>
-          <div class="modal-title">สินค้านอกระบบมีอยู่ในระบบแล้ว</div>
-          <div class="modal-subtitle" id="unreg-exists-assetno" style="color:#fef3c7;font-size:16px;font-weight:800;margin-top:2px;"></div>
+          <div class="modal-title" style="color: var(--text-dim);">สินค้านอกระบบมีอยู่ในระบบแล้ว</div>
+          <div class="modal-subtitle" id="unreg-exists-assetno" style="color:var(--warning);font-size:16px;font-weight:800;margin-top:2px;"></div>
         </div>
       </div>
       <button class="modal-close" onclick="closeUnregExistsModal()">✕</button>
@@ -1429,7 +1567,10 @@ input[type="file"] { display: none; }
       <p style="margin-top: 10px; font-size: 11px; color: var(--text-dim); text-align: center; line-height: 1.4;">ข้อมูลนี้ถูกแจ้งเป็นสินค้านอกระบบไว้เรียบร้อยแล้ว<br><b>เพื่อป้องกันข้อมูลซ้ำซ้อน ไม่จำเป็นต้องเพิ่มหรือนับสต๊อกซ้ำครับ</b></p>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeUnregExistsModal()" style="width:100%;">รับทราบ / สแกนต่อ</button>
+      <button class="btn btn-secondary" onclick="closeUnregExistsModal()" style="width:100%;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        รับทราบ / สแกนต่อ
+      </button>
     </div>
   </div>
 </div>
@@ -1437,12 +1578,14 @@ input[type="file"] { display: none; }
 <!-- Modal Scan Confirm -->
 <div id="modal-scan-confirm" class="modal-overlay hidden" onclick="closeScanConfirmModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
-    <div class="modal-header" style="background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);">
+    <div class="modal-header" style="background: #ffffff; border-bottom: 1px solid var(--border); color: var(--text);">
       <div class="modal-title-row">
-        <span class="modal-icon">✅</span>
+        <span class="modal-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success);"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </span>
         <div>
-          <div class="modal-title">ยืนยันการนับสต๊อก</div>
-          <div class="modal-subtitle" id="scan-confirm-assetno" style="color:#dcfce7;font-size:16px;font-weight:800;margin-top:2px;"></div>
+          <div class="modal-title" style="color: var(--text-dim);">ยืนยันการนับสต๊อก</div>
+          <div class="modal-subtitle" id="scan-confirm-assetno" style="color:var(--success);font-size:16px;font-weight:800;margin-top:2px;"></div>
         </div>
       </div>
       <button class="modal-close" onclick="closeScanConfirmModal()">✕</button>
@@ -1500,26 +1643,38 @@ input[type="file"] { display: none; }
       </div>
 
       <div style="margin:12px 0 8px; font-size:13px; font-weight:700; color:var(--primary);">📷 แนบรูปภาพ (ถ้าต้องการ)</div>
-      <div style="border:1px dashed var(--border);padding:12px;border-radius:8px;text-align:center;">
-        <input type="file" id="scan-update-image" accept="image/*" capture="environment" onchange="previewScanImage(event)">
+      <div style="border:1px dashed var(--border);padding:12px;border-radius:8px;text-align:center;background:#f8fafc;">
+        <input type="file" id="scan-update-image" accept="image/*" capture="environment" onchange="previewScanImage(event)" style="display:none;">
         <div id="scan-img-preview-container" class="hidden">
           <img id="scan-img-preview" style="max-width:100%;max-height:150px;border-radius:8px;margin-bottom:6px;">
-          <button class="btn btn-secondary" onclick="document.getElementById('scan-update-image').click()" style="padding:4px 10px;font-size:11px;">🔄 เปลี่ยนรูป</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('scan-update-image').click()" style="padding:8px 12px;font-size:11px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            เปลี่ยนรูป
+          </button>
         </div>
         <div id="scan-img-placeholder">
-          <button class="btn btn-primary" onclick="document.getElementById('scan-update-image').click()" style="margin:0 auto;width:auto;padding:8px 16px;font-size:12px;">📷 ถ่ายรูป / เลือกรูป</button>
+          <button class="btn btn-primary" onclick="document.getElementById('scan-update-image').click()" style="margin:0 auto;width:auto;padding:10px 20px;font-size:12px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            ถ่ายรูป / เลือกรูป
+          </button>
         </div>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-success" id="btn-scan-confirm" onclick="confirmScanCount()">✅ ยืนยันนับสต๊อก</button>
-      <button class="btn btn-secondary" onclick="closeScanConfirmModal()">ปิด</button>
+      <button class="btn btn-success" id="btn-scan-confirm" onclick="confirmScanCount()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        ยืนยันนับสต๊อก
+      </button>
+      <button class="btn btn-secondary" onclick="closeScanConfirmModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        ปิด
+      </button>
     </div>
   </div>
 </div>
 
 <div class="bottom-nav">
-  <button class="active" onclick="showPage('home')" id="nav-home"><span class="icon">🏠</span><span>หน้าหลัก</span></button>
+  <button class="active" onclick="showPage('home')" id="nav-home"><span class="icon" style="display:inline-flex; align-items:center; justify-content:center; margin-right:4px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></span><span>หน้าหลัก</span></button>
 </div>
 
 <script>
@@ -1913,7 +2068,7 @@ function showStockCountModal(data) {
   
   const btn = document.getElementById("btn-scan-confirm");
   btn.disabled = false;
-  btn.innerHTML = "✅ ยืนยันนับสต๊อก";
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg> ยืนยันนับสต๊อก';
 
   document.getElementById("modal-scan-confirm").classList.remove("hidden");
 }
@@ -2058,7 +2213,7 @@ async function confirmScanCount() {
   // #endregion
   const btn = document.getElementById("btn-scan-confirm");
   btn.disabled = true;
-  btn.innerHTML = "⏳ กำลังบันทึก...";
+  btn.innerHTML = '<span class="spinner-sm" style="margin-right:6px;"></span>กำลังบันทึก...';
 
   const newWarehouse = document.getElementById("scan-update-warehouse").value;
   const newArea = document.getElementById("scan-update-area").value;
@@ -2166,7 +2321,7 @@ async function confirmScanCount() {
   } catch (err) {
     alert("Error: " + err.message);
     btn.disabled = false;
-    btn.innerHTML = "✅ ยืนยันนับสต๊อก";
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg> ยืนยันนับสต๊อก';
     resumeScannerAfterAction();
   }
 }
@@ -2503,7 +2658,7 @@ async function submitAdd() {
   }
 
   const saveBtn = document.querySelector("#page-add .btn-success");
-  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = "⏳ กำลังบันทึก..."; }
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = '<span class="spinner-sm" style="margin-right:6px;"></span>กำลังบันทึก...'; }
 
   const savedNo = currentAssetNo;
   await yieldToUI();
@@ -2513,7 +2668,7 @@ async function submitAdd() {
   document.getElementById("input-category").value  = "";
   document.getElementById("input-warehouse").value = "";
   document.getElementById("input-area").value      = "KM23";
-  if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = "💾 บันทึก"; }
+  if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> บันทึก'; }
   showPage("home");
 
   setResult(`<div class="result-card success"><div style="font-size:36px;margin-bottom:8px;">⏳</div><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">กำลังบันทึก</div><div style="font-size:22px;font-weight:800;margin-top:4px;">${escHtml(savedNo)}</div><div style="font-size:13px;color:var(--text-dim);margin-top:4px;">กำลังส่งข้อมูลไปยัง Google Sheet...</div></div>`);
@@ -2676,7 +2831,8 @@ function renderTable(assets) {
   }
 
   // Filter by search (ค้นหาทั้ง รหัส / ชื่อ / หมวดหมู่ / พื้นที่ / คลัง)
-  const search = document.getElementById("search-input")?.value.trim().toUpperCase() || "";
+  const searchInput = document.getElementById("search-input");
+  const search = searchInput ? searchInput.value.trim().toUpperCase() : "";
   if (search) {
     filtered = filtered.filter(row =>
       [0, 1, 2, 3, 4].some(i => String(row[i]).toUpperCase().includes(search))
@@ -2684,8 +2840,10 @@ function renderTable(assets) {
   }
 
   // Filter by date (scan date → acquisition date fallback)
-  const dateFrom = document.getElementById("date-from")?.value;
-  const dateTo   = document.getElementById("date-to")?.value;
+  const dateFromEl = document.getElementById("date-from");
+  const dateToEl   = document.getElementById("date-to");
+  const dateFrom = dateFromEl ? dateFromEl.value : null;
+  const dateTo   = dateToEl ? dateToEl.value : null;
   if (dateFrom || dateTo) {
     const from = dateFrom ? new Date(dateFrom + "T00:00:00") : null;
     const to   = dateTo   ? new Date(dateTo   + "T23:59:59") : null;
@@ -2736,7 +2894,7 @@ function renderTable(assets) {
       <div class="cell">${getStatusBadge(status)}</div>
       <div class="cell" style="font-size:11px;color:var(--text-dim);">${lastResult}</div>
       <div class="cell">
-        <button class="row-btn pdf" onclick="printAssetLabel('${assetNo}')">🖨️</button>
+        <button class="row-btn pdf" onclick="printAssetLabel('${assetNo}')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></button>
       </div>
       <div class="cell">
         <button class="row-btn detail" onclick="viewAssetDetail('${assetNo}')">ดูข้อมูล</button>
@@ -2775,7 +2933,8 @@ function renderUnregTable() {
   }
 
   // Filter by search (รหัส / ชื่อ / พื้นที่ / หมายเหตุ)
-  const search = document.getElementById("search-input")?.value.trim().toUpperCase() || "";
+  const searchInputUnreg = document.getElementById("search-input");
+  const search = searchInputUnreg ? searchInputUnreg.value.trim().toUpperCase() : "";
   let filtered = baseData;
   if (search) {
     filtered = filtered.filter(row =>
@@ -2784,8 +2943,10 @@ function renderUnregTable() {
   }
 
   // Filter by date (row 6 is Date Added)
-  const dateFrom = document.getElementById("date-from")?.value;
-  const dateTo   = document.getElementById("date-to")?.value;
+  const dateFromElUnreg = document.getElementById("date-from");
+  const dateToElUnreg   = document.getElementById("date-to");
+  const dateFrom = dateFromElUnreg ? dateFromElUnreg.value : null;
+  const dateTo   = dateToElUnreg ? dateToElUnreg.value : null;
   if (dateFrom || dateTo) {
     const from = dateFrom ? new Date(dateFrom + "T00:00:00") : null;
     const to   = dateTo   ? new Date(dateTo   + "T23:59:59") : null;
@@ -2859,15 +3020,15 @@ function openConfirmUnregModal(tempId) {
   
   if (isDuplicate) {
     footerDiv.innerHTML = `
-      <button class="btn btn-danger" style="flex:1;" onclick="deleteUnregAsset('${tempId}')">🗑️ ลบข้อมูล</button>
-      <button class="btn btn-secondary" style="flex:1;" onclick="closeConfirmUnregModal()">ยกเลิก</button>
+      <button class="btn btn-danger" style="flex:1;" onclick="deleteUnregAsset('${tempId}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>ลบข้อมูล</button>
+      <button class="btn btn-secondary" style="flex:1;" onclick="closeConfirmUnregModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>ยกเลิก</button>
     `;
     warnDiv.classList.remove("hidden");
     if(textP) textP.classList.add("hidden");
   } else {
     footerDiv.innerHTML = `
-      <button class="btn btn-success" style="flex:1;" id="btn-confirm-unreg-submit" onclick="submitConfirmUnreg('${tempId}')">✅ ยืนยันข้อมูล</button>
-      <button class="btn btn-secondary" style="flex:1;" onclick="closeConfirmUnregModal()">ยกเลิก</button>
+      <button class="btn btn-success" style="flex:1;" id="btn-confirm-unreg-submit" onclick="submitConfirmUnreg('${tempId}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>ยืนยันข้อมูล</button>
+      <button class="btn btn-secondary" style="flex:1;" onclick="closeConfirmUnregModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>ยกเลิก</button>
     `;
     warnDiv.classList.add("hidden");
     if(textP) textP.classList.remove("hidden");
@@ -2880,7 +3041,7 @@ async function deleteUnregAsset(tempId) {
   if (!confirm(`คุณต้องการลบข้อมูล ${tempId} ใช่หรือไม่? (รูปภาพใน Drive จะถูกลบด้วย)`)) return;
   
   const footerDiv = document.getElementById('modal-confirm-unreg-footer');
-  footerDiv.innerHTML = `<div class="spinner" style="margin:0 auto;"></div><span style="font-size:13px; margin-left:8px; color:var(--text-muted);">กำลังลบข้อมูล...</span>`;
+  footerDiv.innerHTML = `<span class="spinner-sm" style="margin-right:6px;"></span><span style="font-size:13px; color:var(--text-muted);">กำลังลบข้อมูล...</span>`;
   
   try {
     const res = await fetch(apiUrl({ action: "deleteUnreg", tempId: tempId }));
@@ -2924,7 +3085,7 @@ async function submitConfirmUnreg(tempId) {
 
   const btn = document.getElementById("btn-confirm-unreg-submit");
   const originalText = btn.innerHTML;
-  btn.innerHTML = "⏳ กำลังดำเนินการ...";
+  btn.innerHTML = '<span class="spinner-sm" style="margin-right:6px;"></span>กำลังดำเนินการ...';
   btn.disabled = true;
 
   try {
@@ -2998,7 +3159,7 @@ async function submitApproveAll() {
   
   const btn = document.getElementById("btn-approve-login");
   const oldText = btn.innerHTML;
-  btn.innerHTML = "⏳ ตรวจสอบ...";
+  btn.innerHTML = '<span class="spinner-sm" style="margin-right:6px;"></span>ตรวจสอบ...';
   btn.disabled = true;
   
   try {
@@ -3324,7 +3485,7 @@ function exportExcel() {
     { s: { r: 0, c: 0 }, e: { r: 0, c: range.e.c } }
   ];
 
-  XLSX.utils.book_append_sheet(wb, ws, "Assets");
+  XLSX.utils.book_append_sheet(wb, ws, "Assets_Master");
 
   // --- NEW Asset Sheet ---
   const unregExportData = [];
@@ -3402,7 +3563,7 @@ function exportExcel() {
     ];
   }
 
-  XLSX.utils.book_append_sheet(wb, wsUnreg, "NEW Asset");
+  XLSX.utils.book_append_sheet(wb, wsUnreg, "Unregistered_Assets");
   // --- End NEW Asset Sheet ---
 
   XLSX.writeFile(wb, `VESPA_Asset_Report_${new Date().toISOString().split("T")[0]}.xlsx`);
@@ -3432,7 +3593,7 @@ function closeManualAddModal() {
   document.getElementById("manual-upload-placeholder").classList.remove("hidden");
   const btn = document.getElementById("btn-manual-submit");
   btn.disabled = false;
-  btn.textContent = "💾 บันทึกและอัปโหลด";
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> บันทึกและอัปโหลด';
 }
 
 function previewManualImage(event) {
@@ -3459,7 +3620,7 @@ function previewManualImage(event) {
       manualImageBase64 = base64;
       if (btn) {
         btn.disabled = false;
-        btn.textContent = "💾 บันทึกและอัปโหลด";
+        btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> บันทึกและอัปโหลด';
       }
     })
     .catch(() => {
@@ -3467,7 +3628,7 @@ function previewManualImage(event) {
       manualImageBase64 = null;
       if (btn) {
         btn.disabled = false;
-        btn.textContent = "💾 บันทึกและอัปโหลด";
+        btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> บันทึกและอัปโหลด';
       }
       alert("ไม่สามารถเตรียมรูปภาพได้ กรุณาถ่ายใหม่อีกครั้ง");
     });
@@ -3511,7 +3672,7 @@ async function submitManualAdd() {
 
   const btn = document.getElementById("btn-manual-submit");
   btn.disabled = true;
-  btn.textContent = "⏳ กำลังอัปโหลด...";
+  btn.innerHTML = '<span class="spinner-sm" style="margin-right:6px;"></span>กำลังอัปโหลด...';
 
   try {
     await yieldToUI();
@@ -3586,13 +3747,13 @@ async function submitManualAdd() {
     } else {
       alert("❌ บันทึกไม่สำเร็จ: " + (data ? data.message : "ไม่มีข้อความตอบกลับ"));
       btn.disabled = false;
-      btn.textContent = "💾 บันทึกและอัปโหลด";
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> บันทึกและอัปโหลด';
       return;
     }  } catch (error) {
     alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อ: " + error.toString());
     console.error(error);
     btn.disabled = false;
-    btn.textContent = "💾 บันทึกและอัปโหลด";
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> บันทึกและอัปโหลด';
   }
 }
 
