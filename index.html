@@ -1017,6 +1017,10 @@ input[type="file"] { display: none; }
         <div class="label">รหัสทรัพย์สิน</div>
         <div class="code" id="add-asset-no">-</div>
       </div>
+      <div class="form-field">
+        <label>ชื่อทรัพย์สิน / โมเดล <span class="req">*</span></label>
+        <input type="text" id="input-name" placeholder="เช่น Komatsu Forklift">
+      </div>
       <div class="form-row">
         <div class="form-field">
           <label>หมวดหมู่ <span class="req">*</span></label>
@@ -2828,12 +2832,18 @@ function showAddForm(assetNo) {
 }
 
 async function submitAdd() {
-  const assetName  = "-";
+  const assetName  = document.getElementById("input-name").value.trim();
   const category   = document.getElementById("input-category").value;
   const area       = document.getElementById("input-area").value.trim();
   const warehouse  = document.getElementById("input-warehouse").value;
   const acquisitionDate = document.getElementById("input-date").value;
   const status     = document.getElementById("input-status").value;
+
+  if (!assetName) {
+    alert("❌ กรุณากรอกชื่อทรัพย์สิน / โมเดล");
+    document.getElementById("input-name").focus();
+    return;
+  }
 
   if (!category || !area || !warehouse) {
     alert("กรุณากรอกข้อมูลที่จำเป็น");
@@ -2847,6 +2857,7 @@ async function submitAdd() {
   await yieldToUI();
 
   // Reset form
+  document.getElementById("input-name").value      = "";
   document.getElementById("input-category").value  = "";
   document.getElementById("input-warehouse").value = "";
   document.getElementById("input-area").value      = "KM23";
@@ -3848,8 +3859,8 @@ function previewManualImage(event) {
 }
 
 async function submitManualAdd() {
-  const assetNo   = document.getElementById("manual-asset-no").value.trim();
-  const assetName = "-";
+  const assetNo   = String(document.getElementById("manual-asset-no").value || "").trim();
+  const assetName = String(document.getElementById("manual-name").value || "").trim();
   const category  = document.getElementById("manual-category").value;
   const group     = document.getElementById("manual-loc-group").value;
   const zone      = document.getElementById("manual-area").value;
@@ -3857,6 +3868,12 @@ async function submitManualAdd() {
   const remarks   = "";
   let masterAsset = null;
   
+  if (!assetName || assetName.length === 0) {
+    alert("❌ กรุณากรอกชื่อทรัพย์สิน / โมเดล");
+    document.getElementById("manual-name").focus();
+    return;
+  }
+
   if (!category) {
     alert("กรุณาเลือกหมวดหมู่ทรัพย์สิน");
     return;

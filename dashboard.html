@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
@@ -1013,7 +1013,7 @@ function filterTable() {
 
 function getRowImageHtml(imageLink) {
   if (!imageLink) return `<div class="row-thumb-placeholder">📷</div>`;
-  const match = imageLink.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  const match = imageLink.match(/(?:id=|\/d\/)([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
     const fileId = match[1];
     const thumbUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=150`;
@@ -1054,13 +1054,12 @@ function renderMasterTable(data) {
     let remarkText = r[9] || "";
     
     // Fallback: extract image from result/remark
-    if (!imageLink && lastResultText.includes("(Image: ")) {
-      const imgMatch = lastResultText.match(/\(Image:\s*(https?:\/\/[^\)]+)\)/);
-      if (imgMatch) imageLink = imgMatch[1];
+    const urlRegex = /(https?:\/\/(?:drive|docs)\.google\.com\/[^\s\)]+)/;
+    if (!imageLink && lastResultText.match(urlRegex)) {
+      imageLink = lastResultText.match(urlRegex)[1];
     }
-    if (!imageLink && remarkText.includes("(Image: ")) {
-      const imgMatch = remarkText.match(/\(Image:\s*(https?:\/\/[^\)]+)\)/);
-      if (imgMatch) imageLink = imgMatch[1];
+    if (!imageLink && remarkText.match(urlRegex)) {
+      imageLink = remarkText.match(urlRegex)[1];
     }
 
     const imageHtml = getRowImageHtml(imageLink);
@@ -1236,7 +1235,7 @@ function closeLabelModal() { document.getElementById("modal-label-preview").clas
 // ==================== ASSET DETAILS VIEW ====================
 function getDirectDriveImageHtml(link) {
   if (!link) return "";
-  const match = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  const match = link.match(/(?:id=|\/d\/)([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
     const fileId = match[1];
     const thumbUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=800`;
@@ -1299,22 +1298,17 @@ function viewAssetDetail(assetNo) {
   let remarkText = row ? (row[9] || "") : "";
   let imageLink = row ? (row[10] || "") : "";
 
+  const urlRegex = /(https?:\/\/(?:drive|docs)\.google\.com\/[^\s\)]+)/;
   // Legacy fallback: Extract image from Result
-  if (!imageLink && lastResultText.includes("(Image: ")) {
-    const imgMatch = lastResultText.match(/\(Image:\s*(https?:\/\/[^\)]+)\)/);
-    if (imgMatch) {
-      imageLink = imgMatch[1];
-      lastResultText = lastResultText.replace(/\(Image:\s*https?:\/\/[^\)]+\)/, "").trim();
-    }
+  if (!imageLink && lastResultText.match(urlRegex)) {
+    imageLink = lastResultText.match(urlRegex)[1];
+    lastResultText = lastResultText.replace(/\(Image:\s*https?:\/\/[^\)]+\)/, "").replace(urlRegex, "").trim();
   }
 
   // Legacy fallback: Extract image from Remark
-  if (!imageLink && remarkText.includes("(Image: ")) {
-    const imgMatch = remarkText.match(/\(Image:\s*(https?:\/\/[^\)]+)\)/);
-    if (imgMatch) {
-      imageLink = imgMatch[1];
-      remarkText = remarkText.replace(/\(Image:\s*https?:\/\/[^\)]+\)/, "").trim();
-    }
+  if (!imageLink && remarkText.match(urlRegex)) {
+    imageLink = remarkText.match(urlRegex)[1];
+    remarkText = remarkText.replace(/\(Image:\s*https?:\/\/[^\)]+\)/, "").replace(urlRegex, "").trim();
   }
   
   // Legacy fallback: Extract remark from Result
