@@ -1807,9 +1807,27 @@ async function fetchAssetLookupWithTimeout(cleanCode, timeoutMs = 6000) {
 }
 
 async function refreshCurrentView() {
-  await loadDashboard(true, true);
+  // ล้างแคชข้อมูลในหน้าสแกน เพื่อให้บังคับดึงข้อมูลใหม่
+  allAssets = [];
+  allUnregAssets = [];
+  setResult('');
+
+  if (currentPage === "home") {
+    alert("♻️ ล้างแคชและรีเฟรชระบบเรียบร้อยแล้ว");
+  } else {
+    showLoading("กำลังรีเฟรชระบบ...");
+    setTimeout(() => setResult(''), 800);
+  }
+
   if (currentPage === "scan" && html5QrCode && isScanning && !isProcessing) {
     try { await html5QrCode.resume(); } catch (e) {}
+  }
+  if (currentPage === "handheld") {
+    const hhInput = document.getElementById("handheld-input");
+    if (hhInput) {
+      hhInput.value = "";
+      hhInput.focus();
+    }
   }
 }
 
@@ -2277,31 +2295,84 @@ function previewScanImage(event) {
 
 function updateScanZones() { updateZones('scan-update-warehouse', 'scan-update-area'); }
 
-async function uploadScanImageInBackground(file, meta) {
-  if (!file || !meta || !meta.requestId || !meta.assetNo) return;
+/* ==================== BACKGROUND UPLOAD QUEUE ==================== */
+const bgUploadQueue = [];
+let isBgUploading = false;
+
+function addBgUpload(payload) {
+  bgUploadQueue.push(payload);
+  renderBgUploadQueue();
+  if (!isBgUploading) processBgUploadQueue();
+}
+
+async function processBgUploadQueue() {
+  if (bgUploadQueue.length === 0) {
+    isBgUploading = false;
+    renderBgUploadQueue();
+    return;
+  }
+  isBgUploading = true;
+  renderBgUploadQueue();
+
+  const payload = bgUploadQueue[0];
   try {
-    const base64 = await compressImageToBase64(file);
     const controller = new AbortController();
     const timerId = setTimeout(() => controller.abort(), 30000);
     await fetch(API_URL, {
       method: "POST",
-      body: JSON.stringify({
-        key: API_SECRET,
-        action: "uploadScanImage",
-        requestId: meta.requestId,
-        assetNo: meta.assetNo,
-        assetName: meta.assetName || "",
-        image: base64
-      }),
+      body: JSON.stringify(payload),
       signal: controller.signal
-    }).catch(e => {
-      if (e.name === "AbortError") {
-        console.warn("Background image upload timed out", meta.assetNo);
-      } else {
-        console.warn("Background image upload failed", e);
-      }
     });
     clearTimeout(timerId);
+  } catch(e) {
+    console.warn("Background upload error", e);
+  }
+  bgUploadQueue.shift();
+  processBgUploadQueue();
+}
+
+function renderBgUploadQueue() {
+  let ui = document.getElementById("bg-upload-ui");
+  if (!ui) {
+    ui = document.createElement("div");
+    ui.id = "bg-upload-ui";
+    ui.style.cssText = "position:fixed; bottom:75px; left:50%; transform:translateX(-50%); background:var(--primary); color:white; padding:8px 16px; border-radius:20px; font-size:12px; font-weight:bold; box-shadow:0 4px 12px rgba(0,0,0,0.2); z-index:9999; display:none; pointer-events:none; transition:all 0.3s ease;";
+    document.body.appendChild(ui);
+  }
+
+  if (bgUploadQueue.length > 0) {
+    ui.innerHTML = `<span class="spinner-sm" style="border-width:2px; width:12px; height:12px; margin-right:6px; border-top-color:#fff;"></span>กำลังบันทึกและอัปโหลด (${bgUploadQueue.length} รายการ)`;
+    ui.style.background = "var(--primary)";
+    ui.style.display = "flex";
+  } else {
+    ui.innerHTML = `✅ อัปโหลดเสร็จสิ้น`;
+    ui.style.background = "var(--success)";
+    setTimeout(() => {
+      if (bgUploadQueue.length === 0) ui.style.display = "none";
+    }, 2500);
+  }
+}
+
+window.addEventListener("beforeunload", function (e) {
+  if (bgUploadQueue.length > 0) {
+    e.preventDefault();
+    e.returnValue = "ยังมีข้อมูลกำลังอัปโหลดเบื้องหลัง คุณแน่ใจหรือไม่ที่จะออกจากหน้านี้?";
+    return e.returnValue;
+  }
+});
+
+async function uploadScanImageInBackground(file, meta) {
+  if (!file || !meta || !meta.requestId || !meta.assetNo) return;
+  try {
+    const base64 = await compressImageToBase64(file);
+    addBgUpload({
+      key: API_SECRET,
+      action: "uploadScanImage",
+      requestId: meta.requestId,
+      assetNo: meta.assetNo,
+      assetName: meta.assetName || "",
+      image: base64
+    });
   } catch (e) {
     console.warn("Background image upload error", e.message);
   }
