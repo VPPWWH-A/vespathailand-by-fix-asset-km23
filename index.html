@@ -777,6 +777,17 @@ input[type="file"] { display: none; }
   to   { transform: translateY(0);    opacity: 1; }
 }
 
+/* ปรับตำแหน่งป๊อปอัพโหมดแฮนเทลเมื่อแป้นพิมพ์เด้งขึ้นมาบัง */
+.modal-overlay.handheld-layout {
+  align-items: flex-start !important;
+  overflow-y: auto !important;
+  padding-top: 10px !important;
+}
+.modal-overlay.handheld-layout .modal-box {
+  max-height: none !important;
+  margin-bottom: 240px !important; /* ป้องกันแป้นพิมพ์บังปุ่มล่างสุด ให้ปัดหน้าจอดูได้ */
+}
+
 .modal-header {
   display: flex;
   align-items: center;
@@ -2388,8 +2399,10 @@ function showStockCountModal(data) {
   const c2Idx = exportHeaders.indexOf(c2Name);
   
   const localAsset = allAssets.find(row => String(row[0]).trim().toUpperCase() === String(data.assetNo).trim().toUpperCase());
-  const hasCount1 = localAsset && c1Idx !== -1 && String(localAsset[c1Idx] || "").trim() === "Count";
-  const hasCount2 = localAsset && c2Idx !== -1 && String(localAsset[c2Idx] || "").trim() === "Count";
+  const localVal1 = localAsset && c1Idx !== -1 ? String(localAsset[c1Idx] || "").trim() : "";
+  const localVal2 = localAsset && c2Idx !== -1 ? String(localAsset[c2Idx] || "").trim() : "";
+  const hasCount1 = (data.hasCount1 !== undefined) ? data.hasCount1 : (localVal1 === "Count" || localVal1 === "Checked");
+  const hasCount2 = (data.hasCount2 !== undefined) ? data.hasCount2 : (localVal2 === "Count" || localVal2 === "Checked");
 
   const roundSelect = document.getElementById("scan-count-round");
   const opt1 = roundSelect.querySelector('option[value="1"]');
@@ -2398,14 +2411,24 @@ function showStockCountModal(data) {
   opt1.disabled = false;
   opt2.disabled = false;
 
-  if (hasCount1) opt1.disabled = true;
-  if (hasCount2) opt2.disabled = true;
-
-  if (!opt1.disabled) {
+  // บังคับสิทธิ์การเลือกตามรอบอย่างเคร่งครัด
+  if (!hasCount1 && !hasCount2) {
+    // ถ้ายังไม่เคยนับเลย บังคับนับ Count 1 เท่านั้น (ปิดการเลือก Count 2)
+    opt2.disabled = true;
     roundSelect.value = "1";
-  } else if (!opt2.disabled) {
+  } else if (hasCount1 && !hasCount2) {
+    // ถ้านับ Count 1 ไปแล้ว บังคับนับ Count 2 เท่านั้น (ปิดการเลือก Count 1)
+    opt1.disabled = true;
     roundSelect.value = "2";
+  } else if (hasCount1 && hasCount2) {
+    // ถ้านับครบทั้งคู่แล้ว ปิดตัวเลือกทั้งหมด
+    opt1.disabled = true;
+    opt2.disabled = true;
+    roundSelect.value = "1";
   } else {
+    // กรณีพิเศษอื่น ๆ
+    opt1.disabled = false;
+    opt2.disabled = false;
     roundSelect.value = "1";
   }
 
@@ -2422,7 +2445,13 @@ function showStockCountModal(data) {
     btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg> ยืนยันนับสต๊อก';
   }
 
-  document.getElementById("modal-scan-confirm").classList.remove("hidden");
+  const confirmModal = document.getElementById("modal-scan-confirm");
+  if (currentPage === "handheld") {
+    confirmModal.classList.add("handheld-layout");
+  } else {
+    confirmModal.classList.remove("handheld-layout");
+  }
+  confirmModal.classList.remove("hidden");
 }
 
 function showSuccess(data) {
@@ -4296,6 +4325,12 @@ function openManualAddModal(prefillAssetNo = "", mode = "choice") {
   const cleanPrefill = (typeof prefillAssetNo === 'string' ? prefillAssetNo.trim() : "");
   setManualAddMode(mode);
   document.getElementById("manual-asset-no").value = cleanPrefill;
+  
+  // โหลดข้อมูลเบื้องหลังเพื่อเตรียมชุดข้อมูลและหัวตาราง (สำหรับล็อค Count 1 / 2)
+  if (allAssets.length === 0) {
+    loadDashboard(true);
+  }
+  
   setTimeout(() => {
     const focusEl = mode === "choice" ? document.querySelector("#manual-choice-actions button") : document.getElementById("manual-asset-no");
     if (focusEl) focusEl.focus();
@@ -4388,7 +4423,12 @@ async function submitManualAdd() {
     btn.innerHTML = '<span class="spinner-sm" style="margin-right:6px;"></span>กำลังค้นหา...';
 
     try {
-      const lookupData = await fetchAssetLookupWithTimeout(assetNo, 6000, true);
+      if (allAssets.length === 0) {
+        btn.innerHTML = '<span class="spinner-sm" style="margin-right:6px;"></span>โหลดข้อมูลระบบ...';
+        await loadDashboard(true);
+      }
+      btn.innerHTML = '<span class="spinner-sm" style="margin-right:6px;"></span>กำลังค้นหา...';
+      const lookupData = await fetchAssetLookupWithTimeout(assetNo, 6000);
       btn.disabled = false;
       setManualAddMode("lookup");
 
@@ -4705,7 +4745,7 @@ function submitHandheldCode(code, sourceInput) {
 
   if (sourceInput) {
     sourceInput.value = "";
-    sourceInput.focus();
+    sourceInput.blur();
   }
 }
 
