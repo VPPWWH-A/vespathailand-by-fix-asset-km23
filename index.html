@@ -4282,7 +4282,7 @@ function setManualAddMode(mode) {
   }
   if (locationFields) locationFields.classList.toggle("hidden", isLookup || isChoice);
   if (statusField) statusField.classList.toggle("hidden", isLookup || isChoice);
-  if (statusInput && isUnknownDamaged) statusInput.value = "ชำรุดเสียหาย";
+  if (statusInput && isUnknownDamaged) statusInput.value = "ใช้งานอยู่";
   if (uploadField) uploadField.classList.toggle("hidden", isLookup || isChoice);
   if (note) {
     note.textContent = isChoice
@@ -4407,7 +4407,7 @@ async function submitManualAdd() {
   const category  = isUnknownDamagedMode ? "UNKNOWN" : document.getElementById("manual-category").value;
   const group     = document.getElementById("manual-loc-group").value;
   const zone      = document.getElementById("manual-area").value;
-  const status    = isUnknownDamagedMode ? "ชำรุดเสียหาย" : document.getElementById("manual-status").value;
+  const status    = document.getElementById("manual-status").value;
   const remarks   = isUnknownDamagedMode ? "บาร์โค้ดเสียหาย ไม่ทราบรหัส - รอตรวจสอบจับคู่ทรัพย์สินเดิม" : "";
   let masterAsset = null;
 
