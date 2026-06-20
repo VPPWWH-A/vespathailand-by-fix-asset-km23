@@ -1854,18 +1854,10 @@ async function fetchAssetLookup(cleanCode, { forceFresh = false } = {}) {
 
 
 async function fetchAssetLookupWithTimeout(cleanCode, timeoutMs = 6000) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const lookupRes = await fetch(apiUrl({ action: "lookup", assetNo: cleanCode, nocache: "1" }), { signal: controller.signal });
-    const lookupData = await lookupRes.json().catch(() => null);
-    if (lookupData && lookupData.status === "success") return lookupData;
-    return null;
-  } catch (e) {
-    return null;
-  } finally {
-    clearTimeout(timer);
-  }
+  return Promise.race([
+    fetchAssetLookup(cleanCode, { forceFresh: true }),
+    new Promise(resolve => setTimeout(() => resolve(null), timeoutMs))
+  ]).catch(() => null);
 }
 
 async function refreshCurrentView() {
@@ -4122,11 +4114,6 @@ function openManualAddModal(prefillAssetNo = "", mode = "choice") {
   setManualAddMode(mode);
   document.getElementById("manual-asset-no").value = cleanPrefill;
   
-  // โหลดข้อมูลเบื้องหลังเพื่อเตรียมชุดข้อมูลและหัวตาราง (สำหรับล็อค Count 1 / 2)
-  if (allAssets.length === 0) {
-    loadDashboard(true);
-  }
-  
   setTimeout(() => {
     const focusEl = mode === "choice" ? document.querySelector("#manual-choice-actions button") : document.getElementById("manual-asset-no");
     if (focusEl) focusEl.focus();
@@ -4219,11 +4206,6 @@ async function submitManualAdd() {
     btn.innerHTML = '<span class="spinner-sm" style="margin-right:6px;"></span>กำลังค้นหา...';
 
     try {
-      if (allAssets.length === 0) {
-        btn.innerHTML = '<span class="spinner-sm" style="margin-right:6px;"></span>โหลดข้อมูลระบบ...';
-        await loadDashboard(true);
-      }
-      btn.innerHTML = '<span class="spinner-sm" style="margin-right:6px;"></span>กำลังค้นหา...';
       const lookupData = await fetchAssetLookupWithTimeout(assetNo, 6000);
       btn.disabled = false;
       setManualAddMode("lookup");
@@ -4232,6 +4214,12 @@ async function submitManualAdd() {
         closeManualAddModal();
         lookupData.isBarcodeDamagedFlow = true;
         showStockCountModal(lookupData);
+        return;
+      }
+
+      if (lookupData && lookupData.status === "success" && lookupData.found && lookupData.isUnregistered) {
+        closeManualAddModal();
+        showUnregExistsModal(lookupData);
         return;
       }
 
@@ -4284,6 +4272,11 @@ async function submitManualAdd() {
       }
     } catch (e) {}
     if (!masterAsset || masterAsset.isUnregistered) {
+      if (masterAsset && masterAsset.isUnregistered) {
+        closeManualAddModal();
+        showUnregExistsModal(masterAsset);
+        return;
+      }
       alert("❌ ไม่พบรหัสนี้ในระบบหลัก กรุณาตรวจสอบรหัส หรือใช้โหมดสินค้านอกระบบหากเป็นสินค้าใหม่จริง");
       document.getElementById("manual-asset-no").focus();
       return;
