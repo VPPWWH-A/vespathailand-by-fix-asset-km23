@@ -52,41 +52,40 @@
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: var(--bg); color: var(--text); padding-bottom: 40px; font-size: 14px; background-image: radial-gradient(circle at 50% 0%, #f1f5f9 0%, #f8fafc 100%); background-attachment: fixed; }
+body.overview-fit { height: 100vh; overflow: hidden; padding-bottom: 0; }
 
 /* TOP BAR */
 .top-bar { 
-  background: rgba(255, 255, 255, 0.9); 
-  backdrop-filter: blur(12px); 
-  padding: 16px 24px; 
-  border-bottom: 1px solid var(--border); 
+  background: #ffffff; 
+  padding: 18px; 
+  border-right: 1px solid var(--border); 
   display: flex; 
   flex-direction: column; 
-  gap: 14px; 
-  position: sticky; 
+  gap: 18px; 
+  position: fixed; 
+  left: 0;
   top: 0; 
+  bottom: 0;
+  width: 292px;
   z-index: 100; 
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02); 
+  box-shadow: 8px 0 30px rgba(15,23,42,0.06); 
+  overflow-y: auto;
 }
 .top-bar-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-.top-bar-nav {
-  display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 16px;
+  width: 100%;
 }
 .top-bar-controls {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   width: 100%;
-  padding-top: 14px;
+  padding-top: 0;
   border-top: 1px solid var(--border-light);
-  flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
 }
 
 .brand-text .name { font-size: 18px; font-weight: 800; color: var(--text); letter-spacing: 0.5px; background: linear-gradient(135deg, #0f172a 0%, #334155 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
@@ -94,9 +93,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
 
 .search-filter-group { 
   display: flex; 
-  align-items: center; 
-  gap: 16px; 
-  flex-wrap: wrap; 
+  flex-direction: column;
+  align-items: stretch; 
+  gap: 10px; 
 }
 .search-box {
   position: relative;
@@ -120,6 +119,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
   color: var(--text); 
   transition: 0.2s; 
 }
+.search-box input { width: 100%; }
 .search-box input:focus { 
   border-color: var(--primary); 
   box-shadow: 0 0 0 2px var(--primary-bg); 
@@ -127,7 +127,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
 
 .date-range-group { 
   display: flex; 
-  align-items: center; 
+  flex-direction: column;
+  align-items: stretch; 
   gap: 8px; 
 }
 .filter-label {
@@ -150,34 +151,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
 
 .action-btn-group { 
   display: flex; 
-  align-items: center; 
+  flex-direction: column;
+  align-items: stretch; 
   gap: 8px; 
-  flex-wrap: wrap; 
-}
-
-.nav-back-btn {
-  padding: 9px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: #ffffff;
-  color: var(--text-dim);
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-}
-.nav-back-btn:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--text-dim);
-  color: var(--text);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-.nav-back-btn:active {
-  transform: scale(0.96);
 }
 
 /* AUTH PANEL BUTTONS */
@@ -260,11 +236,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
   transform: none !important;
 }
 
-.main-content { padding: 20px; max-width: 1600px; margin: 0 auto; }
+.main-content { padding: 16px; max-width: none; margin: 0 0 0 292px; }
+body.overview-fit .main-content { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
 /* SUMMARY CARDS */
-.summary-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px; }
-.summary-card { background: var(--bg-card); border-radius: var(--radius); padding: 18px 20px; border: 1px solid var(--border); box-shadow: var(--shadow); position: relative; overflow: hidden; transition: 0.2s; min-height: 156px; display: flex; flex-direction: column; justify-content: center; }
+.summary-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.summary-card { background: var(--bg-card); border-radius: var(--radius); padding: 12px 16px; border: 1px solid var(--border); box-shadow: var(--shadow); position: relative; overflow: hidden; transition: 0.2s; min-height: 96px; display: flex; flex-direction: column; justify-content: center; }
 .summary-card:hover { transform: translateY(-2px); border-color: rgba(0,0,0,0.08); background: var(--bg-card-hover); }
 .summary-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--text-muted); }
 .summary-card.blue::before { background: #0284c7; }
@@ -273,8 +250,293 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
 .summary-card.orange::before { background: var(--warning); }
 .card-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .card-title { font-size: 13px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; }
-.card-number { font-size: 42px; font-weight: 900; margin: 6px 0; color: var(--text); line-height: 1; }
+.card-number { font-size: 32px; font-weight: 900; margin: 3px 0; color: var(--text); line-height: 1; }
 .card-footer { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+
+.profile-switch,
+.view-switch {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: none;
+}
+.profile-btn,
+.view-btn {
+  border: 0;
+  border-radius: 7px;
+  padding: 10px 16px;
+  background: transparent;
+  color: var(--text-dim);
+  font-weight: 800;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+.profile-btn.active,
+.view-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+}
+.sidebar-section { display: grid; gap: 8px; padding-top: 14px; border-top: 1px solid var(--border-light); }
+.sidebar-section.auth-bottom { margin-top: auto; }
+.sidebar-label { font-size: 11px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+.overview-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 58%, rgba(2,132,199,0.08) 100%);
+  box-shadow: var(--shadow);
+}
+.overview-title { font-size: 22px; font-weight: 900; color: var(--text); line-height: 1.15; }
+.overview-subtitle { margin-top: 6px; color: var(--text-dim); font-size: 13px; font-weight: 700; }
+.overview-status-pill {
+  min-width: 180px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  background: #0f172a;
+  color: #ffffff;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 900;
+  box-shadow: 0 10px 24px rgba(15,23,42,0.12);
+}
+.overview-grid {
+  display: grid;
+  grid-template-columns: minmax(420px, 1.35fr) minmax(320px, 0.85fr);
+  gap: 12px;
+  margin-bottom: 0;
+  min-height: 0;
+  flex: 1;
+}
+.overview-panel {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px 16px;
+  min-height: 0;
+}
+.overview-panel h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  color: var(--text);
+}
+.breakdown-list {
+  display: grid;
+  gap: 10px;
+}
+.breakdown-row {
+  display: grid;
+  grid-template-columns: minmax(80px, 1fr) minmax(90px, auto);
+  gap: 12px;
+  align-items: center;
+}
+.breakdown-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.breakdown-value {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.breakdown-bar {
+  grid-column: 1 / -1;
+  height: 9px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+.breakdown-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0284c7, #059669);
+}
+.warehouse-stack { display: grid; gap: 6px; max-height: calc(100vh - 312px); overflow-y: auto; padding-right: 4px; }
+.warehouse-card {
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  background: #f8fafc;
+  transition: 0.18s ease;
+}
+.warehouse-card:hover { background: #ffffff; border-color: var(--primary-light); box-shadow: 0 8px 22px rgba(15,23,42,0.08); transform: translateY(-1px); }
+.warehouse-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.warehouse-name { font-size: 15px; font-weight: 900; color: var(--text); }
+.warehouse-stat { font-size: 12px; font-weight: 900; color: var(--text); font-variant-numeric: tabular-nums; text-align: right; }
+.warehouse-pending { grid-column: 1 / -1; font-size: 12px; font-weight: 900; color: var(--danger); font-variant-numeric: tabular-nums; }
+.warehouse-energy {
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #e2e8f0;
+  border: 1px solid #dbe3ed;
+  margin-bottom: 4px;
+}
+.warehouse-energy-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0284c7 0%, #059669 100%);
+}
+.warehouse-hint { margin-top: 4px; color: var(--text-muted); font-size: 10px; font-weight: 800; }
+.zone-list { display: grid; gap: 6px; }
+.zone-row {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.9fr) minmax(120px, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+}
+.zone-name { font-size: 12px; font-weight: 800; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.zone-counted { color: var(--text-dim); font-size: 12px; font-weight: 900; font-variant-numeric: tabular-nums; text-align: right; }
+.zone-pending { color: var(--danger); font-size: 12px; font-weight: 900; font-variant-numeric: tabular-nums; }
+.zone-energy {
+  height: 10px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+  border: 1px solid #dbe3ed;
+}
+.zone-energy-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #38bdf8 0%, #059669 100%);
+}
+.type-progress-list { display: grid; gap: 8px; max-height: calc(100vh - 312px); overflow-y: auto; padding-right: 4px; }
+.type-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 12px;
+  align-items: center;
+  padding: 9px 10px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  background: #f8fafc;
+}
+.type-meta { min-width: 0; }
+.type-title { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 10px; min-width: 0; }
+.type-code {
+  flex: 0 0 auto;
+  min-width: 54px;
+  padding: 6px 9px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 950;
+  text-align: center;
+}
+.type-name { font-size: 13px; font-weight: 900; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.type-count {
+  min-width: 128px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  font-size: 15px;
+  font-weight: 950;
+  color: #0f172a;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.type-energy {
+  grid-column: 1 / -1;
+  height: 20px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #e2e8f0;
+  border: 1px solid #dbe3ed;
+  position: relative;
+}
+.type-energy-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0284c7 0%, #059669 100%);
+}
+.type-energy-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(15,23,42,0.45);
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 1200px) {
+  .projector-mode .card-number { font-size: 44px; }
+  .projector-mode .summary-card { min-height: 128px; }
+  .projector-mode .overview-panel h3 { font-size: 17px; }
+}
+@media (max-height: 820px) and (min-width: 901px) {
+  .main-content { padding: 14px; }
+  .overview-hero { padding: 14px 18px; margin-bottom: 10px; }
+  .overview-title { font-size: 22px; }
+  .summary-row { gap: 10px; margin-bottom: 12px; }
+  .summary-card { min-height: 104px; padding: 12px 16px; }
+  .projector-mode .summary-card { min-height: 104px; }
+  .card-number,
+  .projector-mode .card-number { font-size: 34px; }
+  .overview-grid { gap: 12px; margin-bottom: 0; }
+  .overview-panel { padding: 12px; }
+  .warehouse-stack,
+  .type-progress-list { max-height: calc(100vh - 292px); }
+  .warehouse-card { padding: 8px 10px; }
+  .warehouse-name { font-size: 14px; }
+  .warehouse-pending { font-size: 12px; }
+  .type-row { padding: 8px; }
+  .type-count { padding: 6px 9px; font-size: 13px; }
+  .progress-duo { gap: 16px; }
+  .progress-duration-pill { margin-top: 4px; }
+}
+@media (max-width: 1320px) {
+  .overview-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 900px) {
+  .top-bar {
+    position: static;
+    width: auto;
+    min-height: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .main-content { margin-left: 0; padding: 16px; }
+  .overview-hero { flex-direction: column; align-items: flex-start; }
+  .overview-status-pill { width: 100%; }
+  .type-row { grid-template-columns: 1fr; }
+  .type-count { width: 100%; }
+  .summary-row,
+  .overview-grid { grid-template-columns: 1fr; }
+}
 
 /* Circular Progress Chart inside card */
 .progress-ring-container { width: 62px; height: 62px; display: flex; align-items: center; justify-content: center; }
@@ -290,8 +552,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
 .progress-duration-pill { display: inline-flex; align-items: center; justify-content: center; width: fit-content; margin: 8px auto 0; padding: 5px 10px; border-radius: 999px; background: rgba(217,119,6,0.1); color: #92400e; font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; }
 
 /* NAVIGATION PILLARS */
-.pillar-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-.pillar-btn { background: var(--bg-card); border: 1px solid var(--border); padding: 18px; border-radius: var(--radius); cursor: pointer; font-weight: 800; font-size: 15px; transition: all 0.25s ease; box-shadow: var(--shadow); color: var(--text-dim); display: flex; align-items: center; justify-content: center; gap: 8px; }
+.pillar-nav { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 0; }
+.pillar-btn { background: var(--bg-card); border: 1px solid var(--border); padding: 12px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 800; font-size: 13px; transition: all 0.25s ease; box-shadow: none; color: var(--text-dim); display: flex; align-items: center; justify-content: flex-start; gap: 8px; text-align: left; }
 .pillar-btn:hover { background: var(--bg-card-hover); border-color: rgba(0,0,0,0.08); color: var(--text); }
 .pillar-btn.active { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: white; border-color: var(--primary); box-shadow: 0 4px 20px rgba(2, 132, 199, 0.15); }
 
@@ -422,7 +684,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
 .modal-header { padding: 16px 20px; background: #ffffff; color: var(--text); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
 .modal-body { padding: 20px; max-height: 65vh; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
 .modal-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; background: rgba(0, 0, 0, 0.01); }
-.auth-panel { display:flex; align-items:center; gap:8px; padding:6px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); background:rgba(0,0,0,0.02); font-size:12px; }
+.auth-panel { display:flex; flex-direction:column; align-items:stretch; gap:8px; padding:10px; border:1px solid var(--border); border-radius:var(--radius-sm); background:rgba(0,0,0,0.02); font-size:12px; }
 .auth-panel strong { color:var(--primary); }
 .auth-input { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); margin-top:6px; background:#ffffff; color:var(--text); outline:none; }
 .auth-input:focus { border-color:var(--primary); }
@@ -491,25 +753,32 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
       <div class="name">VPPW (THAILAND) CO., LTD.</div>
       <div class="sub">Asset Management Dashboard — สำนักงาน KM.23</div>
     </div>
-    <div class="top-bar-nav">
-      <button class="nav-back-btn" onclick="localStorage.setItem('lastActivePage','home'); window.location.href='index.html?page=home'">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        กลับหน้าสแกนตรวจนับ
-      </button>
-      <div class="auth-panel" id="auth-panel">
-        <span id="auth-status" style="color:var(--text-dim); font-weight:600; margin-right:4px;">ยังไม่ได้เข้าสู่ระบบ</span>
-        <button class="auth-btn login" id="auth-login-btn" onclick="openApproveLogin()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          เข้าสู่ระบบอนุมัติ
-        </button>
-        <button class="auth-btn logout hidden" id="auth-logout-btn" onclick="logoutApprove()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-          ออกจากระบบ
-        </button>
-      </div>
-    </div>
   </div>
   
+  <div class="sidebar-section">
+    <div class="sidebar-label">มุมมอง</div>
+    <div class="view-switch" aria-label="เลือกมุมมอง">
+      <button class="view-btn active" id="view-overview" onclick="setDashboardView('overview')">Overview</button>
+      <button class="view-btn" id="view-table" onclick="setDashboardView('table')">Table</button>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">ข้อมูลที่แสดง</div>
+    <div class="pillar-nav">
+      <button class="pillar-btn active" id="pillar-count" onclick="setPillar('count')"><span class="icon" style="display:inline-flex; align-items:center; justify-content:center; margin-right:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span>ทรัพย์สินในระบบ (MASTER)</button>
+      <button class="pillar-btn" id="pillar-unreg" onclick="setPillar('unreg')"><span class="icon" style="display:inline-flex; align-items:center; justify-content:center; margin-right:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>สินค้านอกระบบ (NEW ITEMS)</button>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">รอบตรวจนับ</div>
+    <div class="profile-switch" aria-label="เลือกโปรไฟล์การนับ">
+      <button class="profile-btn active" id="count-profile-1" onclick="setCountProfile(1)">Count 1</button>
+      <button class="profile-btn" id="count-profile-2" onclick="setCountProfile(2)">Count 2</button>
+    </div>
+  </div>
+
   <div class="top-bar-controls">
     <div class="search-filter-group">
       <div class="search-box">
@@ -527,7 +796,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
     <div class="action-btn-group">
       <button class="control-btn control-btn-primary" onclick="loadDashboard()" id="refresh-btn">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-        รีเฟรชข้อมูล
+        Auto refresh 2 นาที
       </button>
       <button class="control-btn control-btn-success" onclick="exportExcel()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
@@ -535,17 +804,34 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
       </button>
     </div>
   </div>
+
+  <div class="sidebar-section auth-bottom">
+    <div class="sidebar-label">ระบบล็อกอิน</div>
+    <div class="auth-panel" id="auth-panel">
+      <span id="auth-status" style="color:var(--text-dim); font-weight:600;">ยังไม่ได้เข้าสู่ระบบ</span>
+      <button class="auth-btn login" id="auth-login-btn" onclick="openApproveLogin()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        เข้าสู่ระบบอนุมัติ
+      </button>
+      <button class="auth-btn logout hidden" id="auth-logout-btn" onclick="logoutApprove()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        ออกจากระบบ
+      </button>
+    </div>
+  </div>
 </div>
 
 <div class="main-content">
-  <!-- NAVIGATION PILLARS -->
-  <div class="pillar-nav">
-    <button class="pillar-btn active" id="pillar-count" onclick="setPillar('count')"><span class="icon" style="display:inline-flex; align-items:center; justify-content:center; margin-right:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span>ทรัพย์สินในระบบ (MASTER)</button>
-    <button class="pillar-btn" id="pillar-unreg" onclick="setPillar('unreg')"><span class="icon" style="display:inline-flex; align-items:center; justify-content:center; margin-right:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>สินค้านอกระบบ (NEW ITEMS)</button>
-  </div>
+  <section id="overview-hero" class="overview-hero projector-mode">
+    <div>
+      <div class="overview-title">ภาพรวมการตรวจนับทรัพย์สิน</div>
+      <div class="overview-subtitle" id="overview-subtitle">เลือก Count 1 หรือ Count 2 เพื่อดูภาพรวมล่าสุด</div>
+    </div>
+    <div class="overview-status-pill" id="overview-status-pill">กำลังโหลดข้อมูล...</div>
+  </section>
 
   <!-- SUMMARY CARDS FOR MASTER -->
-  <div id="summary-count" class="summary-row">
+  <div id="summary-count" class="summary-row projector-mode">
     <div class="summary-card blue">
       <div class="card-header-row"><div class="card-title">ทรัพย์สินทั้งหมด</div></div>
       <div class="card-number" id="dash-total">-</div>
@@ -591,6 +877,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
     </div>
   </div>
 
+  <div id="overview-panels" class="overview-grid projector-mode">
+    <div class="overview-panel">
+      <h3>คลังและโซน: ตรวจนับได้ / เหลือ</h3>
+      <div id="warehouse-zone-overview" class="warehouse-stack"></div>
+    </div>
+    <div class="overview-panel">
+      <h3>Type: นับได้ / ทั้งหมด</h3>
+      <div id="type-overview" class="type-progress-list"></div>
+    </div>
+  </div>
+
   <!-- SUMMARY CARDS FOR UNREG -->
   <div id="summary-unreg" class="summary-row hidden">
     <div class="summary-card red"><div class="card-title">สินค้านอกระบบรออนุมัติ</div><div class="card-number" id="dash-pillar-unreg">-</div><div class="card-footer">รายการรอยืนยันเข้าระบบหลัก</div></div>
@@ -603,7 +900,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
 
   <!-- TABS FILTERS -->
   <!-- TABS FILTERS -->
-  <div id="filter-tab-container" class="filter-card">
+  <div id="filter-tab-container" class="filter-card hidden">
     <div class="filter-row">
       <span class="filter-row-label">หมวดหมู่ทรัพย์สิน:</span>
       <div class="tab-bar">
@@ -629,7 +926,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
   </div>
 
   <!-- DATA TABLE MASTER -->
-  <div class="table-container" id="table-master-container">
+  <div class="table-container hidden" id="table-master-container">
     <div class="table-header">
       <div>วันที่เช็ค</div><div>รหัสทรัพย์สิน</div><div>หมวดหมู่</div><div>รูปภาพ</div><div>ชื่อทรัพย์สิน / พื้นที่</div><div>คลัง</div><div>วันที่ได้มา</div><div>สถานะ</div><div>ผลเช็ค</div><div>ใช้เวลา</div><div>Label</div><div>ข้อมูล</div>
     </div>
@@ -695,6 +992,37 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         ปิดหน้าต่าง
       </button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-warehouse-overview" class="modal-overlay hidden" onclick="closeWarehouseOverviewModal()" onmouseleave="closeWarehouseOverviewModal()">
+  <div class="modal-box" onclick="event.stopPropagation()" style="max-width:760px;">
+    <div class="modal-header">
+      <div>
+        <div id="warehouse-modal-title" style="font-size:18px;font-weight:900;">-</div>
+        <div id="warehouse-modal-summary" style="font-size:12px;color:var(--text-dim);font-weight:800;margin-top:3px;">-</div>
+      </div>
+      <button class="modal-close" onclick="closeWarehouseOverviewModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="warehouse-modal-body" class="zone-list"></div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-type-overview" class="modal-overlay hidden" onclick="closeTypeOverviewModal()">
+  <div class="modal-box" onclick="event.stopPropagation()" style="max-width:760px;">
+    <div class="modal-header">
+      <div>
+        <div id="type-modal-title" style="font-size:18px;font-weight:900;">-</div>
+        <div id="type-modal-summary" style="font-size:12px;color:var(--text-dim);font-weight:800;margin-top:3px;">-</div>
+      </div>
+      <button class="modal-close" onclick="closeTypeOverviewModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;font-weight:900;color:var(--text);margin-bottom:10px;">รายการที่ยังขาด แยกตามคลัง / โซน</div>
+      <div id="type-modal-body" class="zone-list"></div>
     </div>
   </div>
 </div>
@@ -778,9 +1106,11 @@ const API_SECRET = "VESPA2025SECRET";
 
 let allAssets = [], allUnregAssets = [], exportHeaders = [], scanDurationByAsset = {}, unregAddedDurationByAsset = {};
 let scanDurationTotalMs = 0;
-let currentPillar = 'count', currentTab = 'all', currentWarehouse = 'all', selectedAssetNo = "";
+let currentPillar = 'count', currentTab = 'all', currentWarehouse = 'all', currentCountProfile = 1, currentDashboardView = 'overview', selectedAssetNo = "";
 let approveAuth = JSON.parse(sessionStorage.getItem("approveAuth") || "null");
 let currentModalAssetNo = "";
+let latestWarehouseOverviewRows = [];
+let latestTypeOverviewRows = [];
 
 function apiUrl(params) {
   const url = new URL(API_URL); url.searchParams.set("key", API_SECRET);
@@ -874,10 +1204,36 @@ function setPillar(p) {
   document.getElementById("pillar-unreg").classList.toggle("active", p === 'unreg');
   document.getElementById("summary-count").classList.toggle("hidden", p !== 'count');
   document.getElementById("summary-unreg").classList.toggle("hidden", p !== 'unreg');
-  document.getElementById("filter-tab-container").classList.toggle("hidden", p !== 'count');
-  document.getElementById("table-master-container").classList.toggle("hidden", p !== 'count');
-  document.getElementById("table-unreg-container").classList.toggle("hidden", p !== 'unreg');
+  syncDashboardView();
   filterTable();
+}
+
+function setCountProfile(profile) {
+  currentCountProfile = profile === 2 ? 2 : 1;
+  document.getElementById("count-profile-1").classList.toggle("active", currentCountProfile === 1);
+  document.getElementById("count-profile-2").classList.toggle("active", currentCountProfile === 2);
+  renderOverview();
+}
+
+function setDashboardView(view) {
+  currentDashboardView = view === 'table' ? 'table' : 'overview';
+  document.getElementById("view-overview").classList.toggle("active", currentDashboardView === 'overview');
+  document.getElementById("view-table").classList.toggle("active", currentDashboardView === 'table');
+  syncDashboardView();
+}
+
+function syncDashboardView() {
+  const isCount = currentPillar === 'count';
+  const isTable = currentDashboardView === 'table';
+  document.body.classList.toggle("overview-fit", isCount && !isTable);
+  const searchFilters = document.querySelector(".search-filter-group");
+  if (searchFilters) searchFilters.classList.toggle("hidden", !isTable);
+  const overviewHero = document.getElementById("overview-hero");
+  if (overviewHero) overviewHero.classList.toggle("hidden", !isCount || isTable);
+  document.getElementById("overview-panels").classList.toggle("hidden", !isCount || isTable);
+  document.getElementById("filter-tab-container").classList.toggle("hidden", !isCount || !isTable);
+  document.getElementById("table-master-container").classList.toggle("hidden", !isCount || !isTable);
+  document.getElementById("table-unreg-container").classList.toggle("hidden", currentPillar !== 'unreg' || !isTable);
 }
 
 function setTab(t, el) {
@@ -888,6 +1244,285 @@ function setTab(t, el) {
 function setWarehouse(w, el) {
   el.parentElement.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
   el.classList.add("active"); currentWarehouse = w; filterTable();
+}
+
+function normalizeHeaderText(value) {
+  return String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function getProfileCountIndex(profile) {
+  if (!Array.isArray(exportHeaders) || exportHeaders.length === 0) return -1;
+  const now = new Date();
+  const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+  const month = months[now.getMonth()];
+  const year = now.getFullYear();
+  const wanted = normalizeHeaderText(`เช็ค ${month} ${year} Count ${profile}`);
+  let idx = exportHeaders.findIndex(h => normalizeHeaderText(h) === wanted);
+  if (idx >= 0) return idx;
+  if (profile === 1) {
+    const legacy = normalizeHeaderText(`เช็ค ${month} ${year}`);
+    idx = exportHeaders.findIndex(h => normalizeHeaderText(h) === legacy);
+  }
+  return idx;
+}
+
+function isCountedValue(value) {
+  const text = String(value == null ? "" : value).trim();
+  if (!text) return false;
+  const lower = text.toLowerCase();
+  return !["0", "false", "no", "n", "-", "pending"].includes(lower);
+}
+
+function normalizeGroupName(value, fallback) {
+  const text = String(value || "").trim();
+  return text || fallback;
+}
+
+function buildBreakdown(rows, groupIndex, countIndex) {
+  const map = new Map();
+  rows.forEach(row => {
+    const name = normalizeGroupName(row[groupIndex], "ไม่ระบุ");
+    const item = map.get(name) || { name, total: 0, checked: 0, pending: 0 };
+    item.total += 1;
+    if (countIndex >= 0 && isCountedValue(row[countIndex])) item.checked += 1;
+    map.set(name, item);
+  });
+  return Array.from(map.values())
+    .map(item => ({ ...item, pending: Math.max(0, item.total - item.checked) }))
+    .sort((a, b) => b.pending - a.pending || a.name.localeCompare(b.name, "th"));
+}
+
+function renderBreakdown(containerId, rows) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  if (!rows.length) {
+    el.innerHTML = '<div style="color:var(--text-muted);font-weight:700;">ไม่มีข้อมูล</div>';
+    return;
+  }
+  const max = Math.max(...rows.map(item => item.pending), 1);
+  el.innerHTML = rows.slice(0, 12).map(item => {
+    const width = Math.round((item.pending / max) * 100);
+    return `
+      <div class="breakdown-row">
+        <div class="breakdown-name" title="${escHtml(item.name)}">${escHtml(item.name)}</div>
+        <div class="breakdown-value">${item.pending.toLocaleString()}</div>
+        <div class="breakdown-bar"><div class="breakdown-fill" style="width:${width}%"></div></div>
+      </div>`;
+  }).join("");
+}
+
+function buildPriorityBreakdown(warehouseRows, zoneRows) {
+  return [
+    ...warehouseRows.slice(0, 6).map(item => ({ ...item, name: `คลัง: ${item.name}` })),
+    ...zoneRows.slice(0, 6).map(item => ({ ...item, name: `โซน: ${item.name}` }))
+  ].sort((a, b) => b.pending - a.pending || a.name.localeCompare(b.name, "th")).slice(0, 10);
+}
+
+function buildWarehouseZoneOverview(rows, countIndex) {
+  const warehouseOrder = ["Warehouse A", "Warehouse B", "Office", "WHD", "HR", "Diff"];
+  const normalizeWarehouseDisplay = (value) => {
+    const text = String(value || "").trim();
+    const lower = text.toLowerCase();
+    if (["warehouse a", "wh-a", "wha", "wh a"].includes(lower)) return "Warehouse A";
+    if (["warehouse b", "wh-b", "whb", "wh b"].includes(lower)) return "Warehouse B";
+    if (lower === "office") return "Office";
+    if (lower === "whd") return "WHD";
+    if (lower === "hr") return "HR";
+    return "Diff";
+  };
+  const warehouses = new Map();
+  rows.forEach(row => {
+    const warehouseName = normalizeWarehouseDisplay(row[4]);
+    const rawWarehouseName = normalizeGroupName(row[4], "ไม่ระบุคลัง");
+    const zoneName = normalizeGroupName(row[3], "ไม่ระบุโซน");
+    const counted = countIndex >= 0 && isCountedValue(row[countIndex]);
+    const warehouse = warehouses.get(warehouseName) || { name: warehouseName, total: 0, checked: 0, zones: new Map(), sources: new Map() };
+    const zone = warehouse.zones.get(zoneName) || { name: zoneName, total: 0, checked: 0 };
+    const source = warehouse.sources.get(rawWarehouseName) || { name: rawWarehouseName, total: 0, checked: 0 };
+    warehouse.total += 1;
+    zone.total += 1;
+    source.total += 1;
+    if (counted) {
+      warehouse.checked += 1;
+      zone.checked += 1;
+      source.checked += 1;
+    }
+    warehouse.zones.set(zoneName, zone);
+    warehouse.sources.set(rawWarehouseName, source);
+    warehouses.set(warehouseName, warehouse);
+  });
+  return Array.from(warehouses.values())
+    .map(warehouse => ({
+      ...warehouse,
+      pending: Math.max(0, warehouse.total - warehouse.checked),
+      sources: Array.from(warehouse.sources.values())
+        .map(source => ({ ...source, pending: Math.max(0, source.total - source.checked) }))
+        .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name, "th")),
+      zones: Array.from(warehouse.zones.values())
+        .map(zone => ({ ...zone, pending: Math.max(0, zone.total - zone.checked) }))
+        .sort((a, b) => b.pending - a.pending || a.name.localeCompare(b.name, "th"))
+    }))
+    .sort((a, b) => warehouseOrder.indexOf(a.name) - warehouseOrder.indexOf(b.name));
+}
+
+function renderWarehouseZoneOverview(containerId, rows) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  latestWarehouseOverviewRows = rows;
+  if (!rows.length) {
+    el.innerHTML = '<div style="color:var(--text-muted);font-weight:700;">ไม่มีข้อมูล</div>';
+    return;
+  }
+  el.innerHTML = rows.map((warehouse, index) => `
+    <div class="warehouse-card" onclick="openWarehouseOverviewModal(${index})">
+      <div class="warehouse-head">
+        <div class="warehouse-name">${escHtml(warehouse.name)}</div>
+        <div class="warehouse-stat">รวม ${warehouse.total.toLocaleString()}</div>
+        <div class="warehouse-pending">${warehouse.name === "Diff" ? `ยอดที่ยังจัดกลุ่มไม่ได้ ${warehouse.total.toLocaleString()} รายการ` : `นับได้ ${warehouse.checked.toLocaleString()} / เหลือ ${warehouse.pending.toLocaleString()}`}</div>
+      </div>
+      <div class="warehouse-energy"><div class="warehouse-energy-fill" style="width:${warehouse.total > 0 ? Math.round((warehouse.checked / warehouse.total) * 100) : 0}%"></div></div>
+      <div class="warehouse-hint">${warehouse.name === "Diff" ? "คลิกเพื่อดูว่ามาจากค่าใด" : "คลิกเพื่อดูโซนย่อย"}</div>
+    </div>`).join("");
+}
+
+function openWarehouseOverviewModal(index) {
+  const warehouse = latestWarehouseOverviewRows[index];
+  if (!warehouse) return;
+  const title = document.getElementById("warehouse-modal-title");
+  const summary = document.getElementById("warehouse-modal-summary");
+  const body = document.getElementById("warehouse-modal-body");
+  if (!title || !summary || !body) return;
+  title.textContent = warehouse.name;
+  summary.textContent = `รวม ${warehouse.total.toLocaleString()} | นับได้ ${warehouse.checked.toLocaleString()} | เหลือ ${warehouse.pending.toLocaleString()}`;
+  const sourceHtml = warehouse.name === "Diff" ? `
+    <div style="font-size:13px;font-weight:900;color:var(--text);margin-bottom:10px;">ที่มาของ Diff</div>
+    ${warehouse.sources.map(source => `
+      <div class="zone-row">
+        <div class="zone-name" title="${escHtml(source.name)}">${escHtml(source.name)}</div>
+        <div class="zone-energy"><div class="zone-energy-fill" style="width:${source.total > 0 ? Math.round((source.checked / source.total) * 100) : 0}%"></div></div>
+        <div class="zone-counted">${source.checked.toLocaleString()} / ${source.total.toLocaleString()}</div>
+        <div class="zone-pending">เหลือ ${source.pending.toLocaleString()}</div>
+      </div>`).join("")}
+    ` : "";
+  body.innerHTML = sourceHtml || warehouse.zones.map(zone => {
+    const zonePct = zone.total > 0 ? Math.round((zone.checked / zone.total) * 100) : 0;
+    return `
+      <div class="zone-row">
+        <div class="zone-name" title="${escHtml(zone.name)}">${escHtml(zone.name)}</div>
+        <div class="zone-energy"><div class="zone-energy-fill" style="width:${zonePct}%"></div></div>
+        <div class="zone-counted">${zone.checked.toLocaleString()} / ${zone.total.toLocaleString()}</div>
+        <div class="zone-pending">เหลือ ${zone.pending.toLocaleString()}</div>
+      </div>`;
+  }).join("");
+  document.getElementById("modal-warehouse-overview").classList.remove("hidden");
+}
+
+function closeWarehouseOverviewModal() {
+  document.getElementById("modal-warehouse-overview").classList.add("hidden");
+}
+
+function renderTypeOverview(containerId, rows) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const typeLabels = {
+    OFF: "สำนักงาน / อุปกรณ์สำนักงาน",
+    COM: "คอมพิวเตอร์ / อุปกรณ์ IT",
+    TOL: "เครื่องมือ / อุปกรณ์ช่าง",
+    VPOT: "อุปกรณ์ VPOT",
+    VEH: "ยานพาหนะ",
+    UNKNOWN: "ไม่ระบุประเภท"
+  };
+  const items = rows.map(item => ({
+    ...item,
+    code: String(item.name || "UNKNOWN").trim().toUpperCase() || "UNKNOWN",
+    pct: item.total > 0 ? Math.round((item.checked / item.total) * 100) : 0
+  })).sort((a, b) => b.total - a.total || a.name.localeCompare(b.name, "th"));
+  latestTypeOverviewRows = items;
+  if (!items.length) {
+    el.innerHTML = '<div style="color:var(--text-muted);font-weight:700;">ไม่มีข้อมูล</div>';
+    return;
+  }
+  el.innerHTML = items.map((item, index) => `
+    <div class="type-row" onclick="openTypeOverviewModal(${index})" style="cursor:pointer;">
+      <div class="type-meta">
+        <div class="type-title">
+          <div class="type-code cat-tag ${escHtml(item.code.toLowerCase().replace(/[^a-z0-9_-]/g, ""))}">${escHtml(item.code)}</div>
+          <div class="type-name" title="${escHtml(typeLabels[item.code] || item.name)}">${escHtml(typeLabels[item.code] || item.name)}</div>
+        </div>
+      </div>
+      <div class="type-energy">
+        <div class="type-energy-fill" style="width:${item.pct}%"></div>
+        <div class="type-energy-label">${item.pct}%</div>
+      </div>
+      <div class="type-count">${item.checked.toLocaleString()} / ${item.total.toLocaleString()}</div>
+    </div>`).join("");
+}
+
+function buildTypePendingBreakdown(typeCode) {
+  const countIndex = getProfileCountIndex(currentCountProfile);
+  const map = new Map();
+  allAssets.forEach(row => {
+    const code = String(row[2] || "UNKNOWN").trim().toUpperCase() || "UNKNOWN";
+    if (code !== typeCode) return;
+    if (countIndex >= 0 && isCountedValue(row[countIndex])) return;
+    const warehouse = normalizeGroupName(row[4], "ไม่ระบุคลัง");
+    const zone = normalizeGroupName(row[3], "ไม่ระบุโซน");
+    const key = `${warehouse} | ${zone}`;
+    const item = map.get(key) || { warehouse, zone, pending: 0 };
+    item.pending += 1;
+    map.set(key, item);
+  });
+  return Array.from(map.values()).sort((a, b) => b.pending - a.pending || a.warehouse.localeCompare(b.warehouse, "th") || a.zone.localeCompare(b.zone, "th"));
+}
+
+function openTypeOverviewModal(index) {
+  const item = latestTypeOverviewRows[index];
+  if (!item) return;
+  const title = document.getElementById("type-modal-title");
+  const summary = document.getElementById("type-modal-summary");
+  const body = document.getElementById("type-modal-body");
+  if (!title || !summary || !body) return;
+  title.textContent = `${item.code} - ${item.name || "ไม่ระบุประเภท"}`;
+  summary.textContent = `นับได้ ${item.checked.toLocaleString()} / รวม ${item.total.toLocaleString()} | เหลือ ${(item.total - item.checked).toLocaleString()}`;
+  const rows = buildTypePendingBreakdown(item.code);
+  body.innerHTML = rows.length ? rows.map(row => `
+    <div class="zone-row">
+      <div class="zone-name" title="${escHtml(row.warehouse)}">${escHtml(row.warehouse)}</div>
+      <div class="zone-name" title="${escHtml(row.zone)}">${escHtml(row.zone)}</div>
+      <div class="zone-pending">ขาด ${row.pending.toLocaleString()}</div>
+    </div>`).join("") : '<div style="font-weight:900;color:var(--success);">ไม่พบรายการคงเหลือของ Type นี้</div>';
+  document.getElementById("modal-type-overview").classList.remove("hidden");
+}
+
+function closeTypeOverviewModal() {
+  document.getElementById("modal-type-overview").classList.add("hidden");
+}
+
+function renderOverview() {
+  if (!Array.isArray(allAssets)) return;
+  const countIndex = getProfileCountIndex(currentCountProfile);
+  const totalAssets = allAssets.length;
+  const checked = countIndex >= 0 ? allAssets.filter(row => isCountedValue(row[countIndex])).length : 0;
+  const pending = Math.max(0, totalAssets - checked);
+  const pct = totalAssets > 0 ? Math.round((checked / totalAssets) * 100) : 0;
+  document.getElementById("dash-total").textContent = totalAssets.toLocaleString();
+  document.getElementById("dash-checked").textContent = checked.toLocaleString();
+  document.getElementById("dash-pending-complete").textContent = pending.toLocaleString();
+  document.getElementById("dash-month-label").textContent = `รายการที่ตรวจสอบแล้ว (${currentCountProfile === 1 ? "Count 1" : "Count 2"})`;
+  document.getElementById("dash-pct-complete").textContent = pct + "%";
+  document.getElementById("dash-pct-pending-complete").textContent = (100 - pct) + "%";
+  const circumference = 2 * Math.PI * 26;
+  const circle = document.getElementById("progress-circle");
+  if (circle) circle.style.strokeDashoffset = circumference - (pct / 100) * circumference;
+  const pendingCircle = document.getElementById("pending-circle");
+  if (pendingCircle) pendingCircle.style.strokeDashoffset = circumference - ((100 - pct) / 100) * circumference;
+  const profileLabel = currentCountProfile === 1 ? "Count 1" : "Count 2";
+  const subtitle = document.getElementById("overview-subtitle");
+  if (subtitle) subtitle.textContent = `${profileLabel} | รวม ${totalAssets.toLocaleString()} รายการ | ตรวจแล้ว ${checked.toLocaleString()} | เหลือ ${pending.toLocaleString()}`;
+  const status = document.getElementById("overview-status-pill");
+  if (status) status.textContent = pending === 0 ? "ตรวจครบแล้ว" : `เหลือจริง ${pending.toLocaleString()} รายการ`;
+  renderWarehouseZoneOverview("warehouse-zone-overview", buildWarehouseZoneOverview(allAssets, countIndex));
+  renderTypeOverview("type-overview", buildBreakdown(allAssets, 2, countIndex));
 }
 
 async function loadDashboard() {
@@ -937,12 +1572,14 @@ async function loadDashboard() {
       document.getElementById("dash-pillar-unreg").textContent = allUnregAssets.length.toLocaleString();
       document.getElementById("dash-total-duration").textContent = formatDurationHms(scanDurationTotalMs);
       document.getElementById("dash-unreg-duration").textContent = formatDurationHms(r2.unregAddedDurationTotalMs || 0);
+      renderOverview();
+      syncDashboardView();
       filterTable();
     } else {
       throw new Error("ไม่สามารถอ่านข้อมูลจาก Server ได้");
     }
   } catch(e) { console.error(e); alert("❌ ไม่สามารถเข้าถึง Server\n" + (e.message || "หมดเวลา หรือ Network Error")); }
-  finally { refreshBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> รีเฟรชข้อมูล`; refreshBtn.disabled = false; }
+  finally { refreshBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Auto refresh 2 นาที`; refreshBtn.disabled = false; }
 }
 
 function filterTable() {
@@ -1616,6 +2253,11 @@ function exportExcel() {
 // โหลดข้อมูลอัตโนมัติเมื่อเปิดหน้าเว็บ
 updateAuthUi();
 loadDashboard();
+setInterval(() => {
+  const refreshBtn = document.getElementById("refresh-btn");
+  if (!refreshBtn || refreshBtn.disabled) return;
+  loadDashboard();
+}, 120000);
 </script>
 </body>
 </html>
