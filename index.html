@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
@@ -2978,7 +2978,39 @@ function setManualAddMode(mode) {
       ? "ใช้เมื่อทรัพย์สินมีอยู่ในระบบ แต่บาร์โค้ด/ป้ายเสียหาย ให้กรอกรหัสเพื่อค้นหาและบันทึกการตรวจนับ"
       : "ใช้เมื่อเป็นสินค้านอกระบบจริง จะใส่รหัสทรัพย์สินหรือเว้นว่างก็ได้ หากเว้นว่างระบบจะสร้างรหัสชั่วคราว TEMP ให้อัตโนมัติ";
   }
-  if (subtitle) subtitle.textContent = isChoice ? "เลือกประเภทปัญหา" : isLookup ? "ค้นหาจากรหัสเดิมและบันทึกการตรวจนับ" : "ถ่ายรูปและบันทึกเป็นรายการรอตรวจสอบ";
+
+  // 🔥 [UI Improvement] Dynamic Modal Header Title & Icon based on Action
+  const modalHeader = document.querySelector("#modal-manual-add .modal-header");
+  if (modalHeader) {
+    const titleEl = modalHeader.querySelector(".modal-title");
+    const iconContainer = modalHeader.querySelector(".modal-icon");
+    if (titleEl) {
+      if (isUnregistered) {
+        titleEl.textContent = "บันทึกทรัพย์สินนอกระบบ (NEW ITEM)";
+      } else if (isUnknownDamaged) {
+        titleEl.textContent = "บาร์โค้ดเสียหาย - ไม่ทราบรหัส";
+      } else {
+        titleEl.textContent = "บันทึกสินค้าบาร์โค้ดเสียหาย";
+      }
+    }
+    if (iconContainer) {
+      if (isUnregistered) {
+        iconContainer.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--danger);"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+      } else {
+        iconContainer.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--warning);"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>`;
+      }
+    }
+  }
+
+  if (subtitle) {
+    subtitle.textContent = isChoice 
+      ? "เลือกประเภทปัญหา" 
+      : isLookup 
+      ? "ค้นหาจากรหัสเดิมและบันทึกการตรวจนับ" 
+      : isUnregistered 
+      ? "เพิ่มรายการสินค้าใหม่นอกระบบไปยังฐานข้อมูล" 
+      : "ถ่ายรูปและบันทึกเป็นรายการรอตรวจสอบ";
+  }
   if (submitBtn) {
     submitBtn.classList.toggle("hidden", isChoice);
     submitBtn.style.display = isChoice ? "none" : "inline-flex";
