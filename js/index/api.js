@@ -42,10 +42,10 @@ function isAlreadyCounted(data) {
 
 /** Read-only server lookup: lookup API, or export search if GAS not updated yet. Never uses scan. */
 async function fetchAssetLookup(cleanCode, { forceFresh = false } = {}) {
-  // Try lookup endpoint with timeout
+  // Fast path: the backend lookup endpoint returns one row instead of exporting the whole sheet.
   try {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 15000);
+    const timer = setTimeout(() => controller.abort(), 8000);
     const lookupRes = await fetch(apiUrl({ action: "lookup", assetNo: cleanCode, ...(forceFresh ? { nocache: "1" } : {}) }), { signal: controller.signal });
     const lookupData = await lookupRes.json().catch(() => null);
     clearTimeout(timer);
@@ -53,22 +53,24 @@ async function fetchAssetLookup(cleanCode, { forceFresh = false } = {}) {
       dbgLog('index.html:fetchAssetLookup', 'lookup ok', { cleanCode, found: !!lookupData.found, via: 'lookup' }, 'H1');
       return lookupData;
     }
-    const needsExportFallback = !lookupData
-      || (lookupData.status === "error" && String(lookupData.message || "").toLowerCase().includes("invalid"));
+    const message = String((lookupData && lookupData.message) || "").toLowerCase();
+    const needsExportFallback = lookupData
+      && lookupData.status === "error"
+      && (message.includes("unknown get action") || message.includes("invalid action"));
     if (!needsExportFallback) {
       dbgLog('index.html:fetchAssetLookup', 'lookup failed', { cleanCode, message: lookupData && lookupData.message }, 'H1');
-      return lookupData;
+      return lookupData || { status: "error", message: "ไม่สามารถโหลดข้อมูลจากเซิร์ฟเวอร์ได้" };
     }
   } catch (e) {
-    // Lookup timed out or failed, fall through to export
     dbgLog('index.html:fetchAssetLookup', 'lookup timeout', { cleanCode, error: e.message }, 'H1');
+    return { status: "error", message: "หมดเวลาระหว่างค้นหา - ตรวจสอบเครือข่าย" };
   }
   
-  // Fallback to export with timeout
+  // Legacy fallback only for old Apps Script deployments that do not have action=lookup yet.
   try {
     dbgLog('index.html:fetchAssetLookup', 'export fallback', { cleanCode }, 'H1');
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 15000);
+    const timer = setTimeout(() => controller.abort(), 10000);
     const expRes = await fetch(apiUrl({ action: "export", ...(forceFresh ? { nocache: "1" } : {}) }), { signal: controller.signal });
     const exp = await expRes.json().catch(() => null);
     clearTimeout(timer);
@@ -106,7 +108,7 @@ async function fetchAssetLookup(cleanCode, { forceFresh = false } = {}) {
       hasCount2: c2Idx !== -1 && (row[c2Idx] === "Count" || row[c2Idx] === "Checked")
     };
   } catch (e) {
-    return { status: "error", message: "❌ หมดเวลากระหว่างค้นหา - ตรวจสอบเครือข่าย" };
+    return { status: "error", message: "หมดเวลาระหว่างค้นหา - ตรวจสอบเครือข่าย" };
   }
 }
 
@@ -114,7 +116,7 @@ async function fetchAssetLookup(cleanCode, { forceFresh = false } = {}) {
 
 async function fetchAssetLookupWithTimeout(cleanCode, timeoutMs = 15000) {
   return Promise.race([
-    fetchAssetLookup(cleanCode, { forceFresh: true }),
+    fetchAssetLookup(cleanCode, { forceFresh: false }),
     new Promise(resolve => setTimeout(() => resolve(null), timeoutMs))
   ]).catch(() => null);
 }
@@ -144,7 +146,7 @@ async function refreshCurrentView() {
   }
 }
 
-async function fetchScanStatusWithTimeout(cleanCode, timeoutMs = 10000) {
+async function fetchScanStatusWithTimeout(cleanCode, timeoutMs = 3000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
