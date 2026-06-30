@@ -122,10 +122,9 @@ async function loadDashboard() {
   refreshBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; animation: spin 1s linear infinite; display: inline-block;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> กำลังโหลด...`; refreshBtn.disabled = true;
 
   try {
-    const [r1, r2] = await Promise.all([
-      fetchWithTimeout(apiUrl({ action: "dashboard", fresh: "1", _: Date.now() }), {}, 15000).then(res => res.json()).catch(() => null),
-      fetchWithTimeout(apiUrl({ action: "export", fresh: "1", _: Date.now() }), {}, 25000).then(res => res.json()).catch(() => null)
-    ]);
+    const r1 = await fetchWithTimeout(apiUrl({ action: "dashboard", fresh: "1", _: Date.now() }), {}, 15000)
+      .then(res => res.json())
+      .catch(() => null);
     
     if(r1 && r1.summary) {
       const totalAssets = Number(r1.summary.totalAssets || 0);
@@ -152,7 +151,14 @@ async function loadDashboard() {
         const pendingPct = Math.max(0, 100 - pct);
         pendingCircle.style.strokeDashoffset = circumference - (pendingPct / 100) * circumference;
       }
+    } else {
+      throw new Error("ไม่สามารถอ่านข้อมูลสรุปจาก Server ได้");
     }
+
+    refreshBtn.innerHTML = `<span class="spinner-sm" style="margin-right:4px;"></span> Loading table...`;
+    const r2 = await fetchWithTimeout(apiUrl({ action: "export", fresh: "1", _: Date.now() }), {}, 25000)
+      .then(res => res.json())
+      .catch(() => null);
     
     if(r2 && Array.isArray(r2.assets)) {
       allAssets = r2.assets; 

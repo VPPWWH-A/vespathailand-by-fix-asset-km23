@@ -6,7 +6,7 @@ function setResult(html) {
   if (r2) r2.innerHTML = html;
 }
 function showLoading(msg) {
-  setResult(`<div class="result-card" style="padding:20px;"><div class="spinner"></div><div style="font-size:13px;color:var(--text-muted);">${escHtml(msg)}</div></div>`);
+  setResult("");
 }
 
 function showError(msg) {
@@ -343,17 +343,19 @@ async function processBgUploadQueue() {
   renderBgUploadQueue();
 
   const payload = bgUploadQueue[0];
+  let timerId = null;
   try {
     const controller = new AbortController();
-    const timerId = setTimeout(() => controller.abort(), 30000);
-    await fetch(API_URL, {
+    timerId = setTimeout(() => controller.abort(), 30000);
+    await timedFetch("uploadScanImage", API_URL, {
       method: "POST",
       body: JSON.stringify(payload),
       signal: controller.signal
-    });
-    clearTimeout(timerId);
+    }, { requestId: payload.requestId, assetNo: payload.assetNo, deferred: true });
   } catch(e) {
     console.warn("Background upload error", e);
+  } finally {
+    if (timerId) clearTimeout(timerId);
   }
   bgUploadQueue.shift();
   processBgUploadQueue();
@@ -458,16 +460,21 @@ async function confirmScanCount() {
     };
 
     const controller = new AbortController();
-    const timerId = setTimeout(() => controller.abort(), 18000);
-    const uploadRes = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      signal: controller.signal
-    }).catch(e => {
+    let timerId = null;
+    let uploadRes = null;
+    try {
+      timerId = setTimeout(() => controller.abort(), 18000);
+      uploadRes = await timedFetch("updateAsset", API_URL, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      }, { requestId, assetNo: pendingScanData.assetNo, hasDeferredImage: !!imageFile });
+    } catch (e) {
       if (e.name === "AbortError") throw new Error("âŒ à¸«à¸¡à¸”à¹€à¸§à¸¥à¸²à¹ƒà¸™à¸à¸²à¸£à¸šà¸±à¸™à¸—à¸¶à¸ - à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸šà¹€à¸„à¸£à¸·à¸­à¸‚à¹ˆà¸²à¸¢");
       throw e;
-    });
-    clearTimeout(timerId);
+    } finally {
+      if (timerId) clearTimeout(timerId);
+    }
     
     const uploadData = await uploadRes.json().catch(() => null);
     // #region agent log
@@ -671,7 +678,7 @@ async function onScanSuccess(decodedText, isHandheld = false) {
 
   } else {
     // Ã°Å¸â€Â Fallback: read-only lookup since it is not found in local cache
-    showLoading("กำลังตรวจสอบข้อมูลกับเซิร์ฟเวอร์...");
+    setResult("");
     try {
       const scanStatusPromise = fetchScanStatusWithTimeout(cleanCode, isHandheld ? 1800 : 2500);
       const lookupPromise = fetchAssetLookup(cleanCode);

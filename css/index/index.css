@@ -1660,3 +1660,30 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Clear primary actions after performance overrides */
+.btn-primary,
+.modal-footer .btn-primary,
+#modal-inspect-search .btn-primary {
+  background: #0f6fa4 !important;
+  color: #ffffff !important;
+  border: 1px solid #0a5f8e !important;
+  font-weight: 800 !important;
+  opacity: 1 !important;
+}
+
+.btn-primary svg,
+.modal-footer .btn-primary svg,
+#modal-inspect-search .btn-primary svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-primary:focus-visible,
+.modal-footer .btn-primary:hover:not(:disabled),
+#modal-inspect-search .btn-primary:hover:not(:disabled) {
+  background: #075985 !important;
+  border-color: #064b70 !important;
+  box-shadow: none !important;
+}

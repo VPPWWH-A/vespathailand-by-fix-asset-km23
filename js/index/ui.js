@@ -69,9 +69,14 @@ async function submitAdd() {
 
   try {
     const controller = new AbortController();
-    const timeout    = setTimeout(() => controller.abort(), 15000);
-    const response   = await fetch(apiUrl({ action: "add", assetNo: savedNo, assetName, category, area, warehouse, acquisitionDate, status }), { signal: controller.signal });
-    clearTimeout(timeout);
+    let timeout = null;
+    let response = null;
+    try {
+      timeout = setTimeout(() => controller.abort(), 15000);
+      response = await timedFetch("add", apiUrl({ action: "add", assetNo: savedNo, assetName, category, area, warehouse, acquisitionDate, status }), { signal: controller.signal }, { assetNo: savedNo });
+    } finally {
+      if (timeout) clearTimeout(timeout);
+    }
     const data = await response.json().catch(() => null);
 
     if (!data) {
@@ -660,11 +665,20 @@ async function submitManualAdd() {
       };
 
   try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: { "Content-Type": "text/plain;charset=utf-8" }
-    });
+    const controller = new AbortController();
+    let timeout = null;
+    let response = null;
+    try {
+      timeout = setTimeout(() => controller.abort(), 30000);
+      response = await timedFetch(payload.action || "upload", API_URL, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        signal: controller.signal
+      }, { assetNo, mode: manualAddMode });
+    } finally {
+      if (timeout) clearTimeout(timeout);
+    }
     const data = await response.json().catch(() => null);
     if (isDamagedMode && data && data.status === "success") {
       closeManualAddModal();

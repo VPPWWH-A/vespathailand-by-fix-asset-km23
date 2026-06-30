@@ -21,6 +21,8 @@ function apiUrl(params) {
 }
 
 const DEBUG_LOG_ENABLED = false;
+const API_PERF_LOG_KEY = "__assetApiPerfLog";
+const API_SLOW_MS = 2500;
 
 function dbgLog(location, message, data, hypothesisId, runId) {
   if (!DEBUG_LOG_ENABLED) return;
@@ -34,6 +36,63 @@ function dbgLog(location, message, data, hypothesisId, runId) {
   } catch (e) {}
 }
 
+function nowMs() {
+  return typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
+}
+
+function readApiPerfLog() {
+  try {
+    return JSON.parse(sessionStorage.getItem(API_PERF_LOG_KEY) || "[]");
+  } catch (_) {
+    return [];
+  }
+}
+
+function recordApiPerf(action, durationMs, meta = {}) {
+  const entry = {
+    action,
+    durationMs: Math.round(durationMs),
+    at: new Date().toISOString(),
+    ...meta
+  };
+
+  try {
+    const log = readApiPerfLog();
+    log.push(entry);
+    sessionStorage.setItem(API_PERF_LOG_KEY, JSON.stringify(log.slice(-80)));
+  } catch (_) {
+    // Telemetry must never block scanning.
+  }
+
+  if (entry.durationMs >= API_SLOW_MS) {
+    console.warn("[API slow]", entry);
+  } else {
+    dbgLog("api.js:recordApiPerf", "api perf", entry, "PERF");
+  }
+}
+
+async function timedFetch(action, url, options = {}, meta = {}) {
+  const startedAt = nowMs();
+  try {
+    const response = await fetch(url, options);
+    recordApiPerf(action, nowMs() - startedAt, {
+      ok: response.ok,
+      status: response.status,
+      ...meta
+    });
+    return response;
+  } catch (err) {
+    recordApiPerf(action, nowMs() - startedAt, {
+      ok: false,
+      error: err?.name || err?.message || "fetch-error",
+      ...meta
+    });
+    throw err;
+  }
+}
+
+window.getApiPerfLog = readApiPerfLog;
+
 function isAlreadyCounted(data) {
   if (data.isUnregistered) return false;
   const lr = String(data.lastResult || "").trim();
@@ -43,12 +102,14 @@ function isAlreadyCounted(data) {
 /** Read-only server lookup: lookup API, or export search if GAS not updated yet. Never uses scan. */
 async function fetchAssetLookup(cleanCode, { forceFresh = false } = {}) {
   // Fast path: the backend lookup endpoint returns one row instead of exporting the whole sheet.
+  let lookupTimer = null;
   try {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 8000);
-    const lookupRes = await fetch(apiUrl({ action: "lookup", assetNo: cleanCode, ...(forceFresh ? { nocache: "1" } : {}) }), { signal: controller.signal });
+    lookupTimer = setTimeout(() => controller.abort(), 8000);
+    const lookupRes = await timedFetch("lookup", apiUrl({ action: "lookup", assetNo: cleanCode, ...(forceFresh ? { nocache: "1" } : {}) }), { signal: controller.signal }, { assetNo: cleanCode, forceFresh });
     const lookupData = await lookupRes.json().catch(() => null);
-    clearTimeout(timer);
+    clearTimeout(lookupTimer);
+    lookupTimer = null;
     if (lookupData && lookupData.status === "success") {
       dbgLog('index.html:fetchAssetLookup', 'lookup ok', { cleanCode, found: !!lookupData.found, via: 'lookup' }, 'H1');
       return lookupData;
@@ -62,18 +123,21 @@ async function fetchAssetLookup(cleanCode, { forceFresh = false } = {}) {
       return lookupData || { status: "error", message: "ไม่สามารถโหลดข้อมูลจากเซิร์ฟเวอร์ได้" };
     }
   } catch (e) {
+    if (lookupTimer) clearTimeout(lookupTimer);
     dbgLog('index.html:fetchAssetLookup', 'lookup timeout', { cleanCode, error: e.message }, 'H1');
     return { status: "error", message: "หมดเวลาระหว่างค้นหา - ตรวจสอบเครือข่าย" };
   }
   
   // Legacy fallback only for old Apps Script deployments that do not have action=lookup yet.
+  let exportTimer = null;
   try {
     dbgLog('index.html:fetchAssetLookup', 'export fallback', { cleanCode }, 'H1');
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 10000);
-    const expRes = await fetch(apiUrl({ action: "export", ...(forceFresh ? { nocache: "1" } : {}) }), { signal: controller.signal });
+    exportTimer = setTimeout(() => controller.abort(), 10000);
+    const expRes = await timedFetch("export", apiUrl({ action: "export", ...(forceFresh ? { nocache: "1" } : {}) }), { signal: controller.signal }, { fallbackFor: "lookup", assetNo: cleanCode, forceFresh });
     const exp = await expRes.json().catch(() => null);
-    clearTimeout(timer);
+    clearTimeout(exportTimer);
+    exportTimer = null;
     
     if (!exp || exp.status !== "ok" || !Array.isArray(exp.assets)) {
       return { status: "error", message: "ไม่สามารถโหลดข้อมูลจากเซิร์ฟเวอร์ได้" };
@@ -108,6 +172,7 @@ async function fetchAssetLookup(cleanCode, { forceFresh = false } = {}) {
       hasCount2: c2Idx !== -1 && (row[c2Idx] === "Count" || row[c2Idx] === "Checked")
     };
   } catch (e) {
+    if (exportTimer) clearTimeout(exportTimer);
     return { status: "error", message: "หมดเวลาระหว่างค้นหา - ตรวจสอบเครือข่าย" };
   }
 }
@@ -150,7 +215,7 @@ async function fetchScanStatusWithTimeout(cleanCode, timeoutMs = 3000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const res = await fetch(apiUrl({ action: "scanStatus", assetNo: cleanCode }), { signal: controller.signal });
+    const res = await timedFetch("scanStatus", apiUrl({ action: "scanStatus", assetNo: cleanCode }), { signal: controller.signal }, { assetNo: cleanCode });
     const data = await res.json().catch(() => null);
     if (data && data.status === "success") return data;
     return null;
