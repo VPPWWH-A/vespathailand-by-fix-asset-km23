@@ -3500,3 +3500,15 @@ body {
   margin-top: 0 !important;
 }
 
+.top-bar-header {
+  align-items: center !important;
+}
+
+.dashboard-sidebar-logo {
+  display: block;
+  width: min(122px, 82%);
+  height: auto;
+  object-fit: contain;
+  margin: 0 auto;
+}
+

@@ -1,6 +1,9 @@
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => navigator.serviceWorker.ready)
+      .then(updateInstallButtonVisibility)
+      .catch(() => {});
   });
 }
 
@@ -16,10 +19,15 @@ function isIosInstallFallback() {
   return isIos && !isWebAppStandalone();
 }
 
+function isMobileInstallFallback() {
+  const ua = window.navigator.userAgent || "";
+  return /android|iphone|ipad|ipod/i.test(ua) && !isWebAppStandalone();
+}
+
 function updateInstallButtonVisibility() {
   const btn = document.getElementById("pwa-install-btn");
   if (!btn) return;
-  const canInstall = !!deferredPwaInstallPrompt || isIosInstallFallback();
+  const canInstall = !!deferredPwaInstallPrompt || isIosInstallFallback() || isMobileInstallFallback();
   btn.classList.toggle("hidden", !canInstall || isWebAppStandalone());
 }
 
@@ -43,7 +51,7 @@ async function installWebApp() {
     return;
   }
   if (!deferredPwaInstallPrompt) {
-    alert("หากใช้ iPhone/iPad ให้กด Share แล้วเลือก Add to Home Screen");
+    alert("หากปุ่มติดตั้งของเบราว์เซอร์ยังไม่ขึ้น ให้เปิดเมนู browser แล้วเลือก Add to Home screen / Install app");
     return;
   }
   const promptEvent = deferredPwaInstallPrompt;

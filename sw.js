@@ -1,11 +1,10 @@
 const CACHE_NAME = 'asset-km23-v1';
 
-// We just need a basic fetch handler to satisfy PWA install requirements.
-// We won't aggressively cache everything to ensure live data is loaded.
 self.addEventListener('fetch', (event) => {
-  // If we don't call respondWith, the browser will just do a normal network request.
-  // This is enough to pass the Chrome PWA criteria.
-  return;
+  if (event.request.method !== 'GET') return;
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request))
+  );
 });
 
 self.addEventListener('install', (event) => {
