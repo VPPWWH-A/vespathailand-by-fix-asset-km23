@@ -688,6 +688,7 @@ async function submitManualAdd() {
   const payload = isDamagedMode
     ? {
         key: API_SECRET,
+        user: getCurrentUser(),
         action: "uploadScanImage",
         assetNo,
         assetName: masterAsset.assetName || assetName,
@@ -702,6 +703,7 @@ async function submitManualAdd() {
       }
     : {
         key: API_SECRET,
+        user: getCurrentUser(),
         action: "upload",
         image: manualImageBase64,
         assetNo,

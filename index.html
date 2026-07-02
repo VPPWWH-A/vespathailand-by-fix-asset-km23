@@ -19,6 +19,39 @@
 </head>
 <body>
 
+<!-- LOGIN GATE (ครอบทั้งแอปจนกว่าจะ login สำเร็จ) -->
+<div id="login-overlay" class="login-overlay">
+  <div class="login-box">
+    <div class="login-header">
+      <div class="login-logo"><img src="./logo-192.png" alt="VPPW (Thailand) Co., Ltd." width="64" height="64"></div>
+      <div class="login-title">VPPW (THAILAND) CO., LTD.</div>
+      <div class="login-subtitle">Asset QR Management &middot; กรุณาเข้าสู่ระบบก่อนใช้งาน</div>
+    </div>
+    <form id="login-form" class="login-body" onsubmit="return handleLoginSubmit(event)">
+      <div class="form-field login-field">
+        <label>Username</label>
+        <div class="login-input-wrap">
+          <svg class="login-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <input type="text" id="login-username" autocomplete="username" placeholder="ชื่อผู้ใช้งาน" required>
+        </div>
+      </div>
+      <div class="form-field login-field">
+        <label>Password</label>
+        <div class="login-input-wrap">
+          <svg class="login-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <input type="password" id="login-password" autocomplete="current-password" placeholder="รหัสผ่าน" required>
+        </div>
+      </div>
+      <div id="login-error" class="login-error hidden"></div>
+      <button type="submit" id="login-submit-btn" class="btn btn-primary btn-full login-submit-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+        เข้าสู่ระบบ
+      </button>
+    </form>
+    <div class="login-footer">© VPPW (Thailand) Co., Ltd. &mdash; Asset QR Management System</div>
+  </div>
+</div>
+
 <!-- TOP BAR -->
 <div class="top-bar">
   <div class="brand">
@@ -32,6 +65,10 @@
     <div class="dot"></div>
     <span class="status-label">ONLINE</span>
   </div>
+  <button id="current-user-chip" class="current-user-chip hidden" type="button" onclick="confirmLogout()" aria-label="ออกจากระบบ">
+    <span id="current-user-name"></span>
+    <span class="logout-icon">⎋</span>
+  </button>
   <button id="pwa-install-btn" class="pwa-install-btn hidden" type="button" onclick="installWebApp()" aria-label="Install web app">
     ติดตั้งแอป
   </button>
@@ -631,6 +668,28 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
         รับทราบและเปิดกล้องสแกน
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Install Guide (รองรับทุกเบราว์เซอร์/อุปกรณ์ ทั้งที่รองรับและไม่รองรับ native install prompt) -->
+<div id="modal-install-guide" class="modal-overlay hidden" onclick="closeInstallGuideModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header" style="background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);">
+      <div class="modal-title-row">
+        <span class="modal-icon">📲</span>
+        <div>
+          <div class="modal-title">ติดตั้งเป็นแอป</div>
+          <div class="modal-subtitle" id="install-guide-subtitle">วิธีติดตั้งบนเครื่องนี้</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeInstallGuideModal()">✕</button>
+    </div>
+    <div class="modal-body" style="padding: 20px;">
+      <ol id="install-guide-steps" class="install-guide-steps"></ol>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" style="width:100%;" onclick="closeInstallGuideModal()">เข้าใจแล้ว</button>
     </div>
   </div>
 </div>

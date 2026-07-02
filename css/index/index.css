@@ -408,9 +408,23 @@ body {
 
 #reader video { width: 100% !important; height: 100% !important; object-fit: cover; }
 
-.scanner-placeholder { text-align: center; color: var(--text-muted); }
+.scanner-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--text-muted);
+  pointer-events: none;
+}
 .scanner-placeholder .big-icon { font-size: 48px; opacity: 0.4; margin-bottom: 8px; }
 .scanner-placeholder p { font-size: 13px; font-weight: 500; }
+
+/* เมื่อกล้องเริ่มทำงาน (มี <video> ถูกแทรกเข้ามาโดย html5-qrcode) ให้ซ่อน placeholder
+   ไม่งั้น video จะถูกบีบให้แคบลงเพราะต้องแชร์พื้นที่ flex กับ placeholder ที่ยังค้างอยู่ */
+#reader:has(video) .scanner-placeholder { display: none; }
 
 .corner { position: absolute; width: 30px; height: 30px; border: 3px solid var(--primary); }
 .corner.tl { top: 16px; left: 16px;  border-right: none; border-bottom: none; }
@@ -1361,6 +1375,192 @@ body {
 
 .pwa-install-btn:hover {
   background: var(--primary-light);
+}
+
+/* ===== LOGIN GATE ===== */
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(2, 132, 199, 0.35), transparent 55%),
+    radial-gradient(circle at 85% 85%, rgba(2, 132, 199, 0.25), transparent 50%),
+    linear-gradient(160deg, #0b1220 0%, #0f172a 55%, #111827 100%);
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.login-box {
+  background: var(--bg-card);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  animation: slideUp 0.25s ease;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.login-header {
+  padding: 32px 24px 22px;
+  text-align: center;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border-bottom: 3px solid var(--primary);
+}
+
+.login-logo {
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 14px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.18), 0 0 0 1px var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.login-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.login-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 0.4px;
+}
+
+.login-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+.login-body {
+  padding: 22px 22px 20px;
+}
+
+.login-field label {
+  font-size: 10.5px;
+  letter-spacing: 0.6px;
+}
+
+.login-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.login-input-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.login-input-wrap input {
+  padding-left: 36px !important;
+}
+
+.login-submit-btn {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-error {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--danger);
+  background: var(--danger-bg);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  margin-bottom: 4px;
+}
+
+.login-footer {
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 0 20px 18px;
+  font-weight: 600;
+}
+
+/* ===== INSTALL GUIDE MODAL ===== */
+.install-guide-steps {
+  list-style: none;
+  counter-reset: install-step;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.install-guide-steps li {
+  counter-increment: install-step;
+  position: relative;
+  padding-left: 34px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.install-guide-steps li::before {
+  content: counter(install-step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary-bg);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.current-user-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+  background: var(--bg-card-hover);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  max-width: 120px;
+}
+
+.current-user-chip span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.current-user-chip .logout-icon {
+  color: var(--danger);
+  font-weight: 900;
+}
+
+.current-user-chip:hover {
+  background: var(--danger-bg);
+  border-color: rgba(220, 38, 38, 0.2);
+  color: var(--danger);
 }
 
 /* Page transitions and visual tweaks */

@@ -13,22 +13,12 @@ function isWebAppStandalone() {
   return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
 }
 
-function isIosInstallFallback() {
-  const ua = window.navigator.userAgent || "";
-  const isIos = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  return isIos && !isWebAppStandalone();
-}
-
-function isMobileInstallFallback() {
-  const ua = window.navigator.userAgent || "";
-  return /android|iphone|ipad|ipod/i.test(ua) && !isWebAppStandalone();
-}
-
+// แสดงปุ่มติดตั้งเสมอ (เว้นแต่ติดตั้งไปแล้ว) แล้วค่อยเลือกวิธี "ติดตั้งยังไง" ตอนกดปุ่ม
+// เพราะการเดาว่าเบราว์เซอร์/เวอร์ชันไหน "รองรับ" ล่วงหน้าจาก UA เปราะบางและตกรุ่นง่าย
 function updateInstallButtonVisibility() {
   const btn = document.getElementById("pwa-install-btn");
   if (!btn) return;
-  const canInstall = !!deferredPwaInstallPrompt || isIosInstallFallback() || isMobileInstallFallback();
-  btn.classList.toggle("hidden", !canInstall || isWebAppStandalone());
+  btn.classList.toggle("hidden", isWebAppStandalone());
 }
 
 window.addEventListener("beforeinstallprompt", (event) => {
@@ -44,24 +34,126 @@ window.addEventListener("appinstalled", () => {
 
 window.addEventListener("load", updateInstallButtonVisibility);
 
+// ===== ตรวจจับ In-app Browser (LINE / Facebook / Instagram / TikTok / WeChat) =====
+// เบราว์เซอร์ในแอปเหล่านี้มักบล็อกทั้งการติดตั้ง PWA และสิทธิ์กล้อง ต้องแนะนำให้เปิดผ่านเบราว์เซอร์หลักก่อน
+function detectInAppBrowserName() {
+  const ua = window.navigator.userAgent || "";
+  if (/FBAN|FBAV/i.test(ua)) return "Facebook";
+  if (/Instagram/i.test(ua)) return "Instagram";
+  if (/Line\//i.test(ua)) return "LINE";
+  if (/MicroMessenger/i.test(ua)) return "WeChat";
+  if (/TikTok/i.test(ua)) return "TikTok";
+  return null;
+}
+
+function detectPlatformInfo() {
+  const ua = window.navigator.userAgent || "";
+  const isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isAndroid = /android/i.test(ua);
+  const isChromeIOS = /crios/i.test(ua);
+  const isFirefoxIOS = /fxios/i.test(ua);
+  const isSamsung = /samsungbrowser/i.test(ua);
+  return { isIOS, isAndroid, isChromeIOS, isFirefoxIOS, isSamsung };
+}
+
+// สร้างขั้นตอนติดตั้งที่เหมาะกับอุปกรณ์/เบราว์เซอร์ที่ตรวจพบ ใช้เป็น fallback สำหรับเบราว์เซอร์/เวอร์ชัน
+// ที่ไม่รองรับ beforeinstallprompt (iOS ทุกเบราว์เซอร์, Firefox, Samsung Internet บางเวอร์ชัน, Desktop Safari ฯลฯ)
+function getInstallGuideContent() {
+  const inAppName = detectInAppBrowserName();
+  if (inAppName) {
+    return {
+      subtitle: `กำลังเปิดผ่านแอป ${inAppName}`,
+      steps: [
+        `แตะเมนู "•••" หรือไอคอนมุมขวาบนของหน้าจอ`,
+        `เลือก "เปิดใน Browser" / "เปิดด้วย Chrome หรือ Safari" (Open in external browser)`,
+        `เมื่อเปิดผ่านเบราว์เซอร์หลักแล้ว กลับมากดปุ่ม "ติดตั้งแอป" อีกครั้ง`
+      ]
+    };
+  }
+
+  const p = detectPlatformInfo();
+
+  if (p.isIOS) {
+    if (p.isChromeIOS || p.isFirefoxIOS) {
+      return {
+        subtitle: "แนะนำให้เปิดผ่าน Safari เพื่อติดตั้งแอป",
+        steps: [
+          `เบราว์เซอร์นี้ติดตั้งแอปโดยตรงไม่ได้ (ข้อจำกัดของ iOS) — กรุณาคัดลอกลิงก์แล้วเปิดด้วย Safari`,
+          `แตะปุ่มแชร์ 🔗 ที่แถบด้านล่างจอ`,
+          `เลือก "เพิ่มไปที่หน้าจอโฮม" (Add to Home Screen) แล้วแตะ "เพิ่ม"`
+        ]
+      };
+    }
+    return {
+      subtitle: "ติดตั้งผ่าน Safari (iOS / iPadOS)",
+      steps: [
+        `แตะปุ่มแชร์ 🔗 ที่แถบด้านล่างจอ (บน iPad จะอยู่แถบด้านบน)`,
+        `เลื่อนหาและแตะ "เพิ่มไปที่หน้าจอโฮม" (Add to Home Screen)`,
+        `แตะ "เพิ่ม" (Add) มุมขวาบนเพื่อยืนยัน`
+      ]
+    };
+  }
+
+  if (p.isAndroid) {
+    return {
+      subtitle: p.isSamsung ? "ติดตั้งผ่าน Samsung Internet" : "ติดตั้งผ่าน Chrome หรือเบราว์เซอร์ Android",
+      steps: [
+        `แตะเมนู "⋮" มุมขวาบนของเบราว์เซอร์`,
+        `เลือก "ติดตั้งแอป" หรือ "เพิ่มไปยังหน้าจอโฮม" (Install app / Add to Home screen)`,
+        `ยืนยันการติดตั้งอีกครั้งในหน้าต่างที่ขึ้นมา`
+      ]
+    };
+  }
+
+  // Desktop (Windows / Mac / Linux)
+  return {
+    subtitle: "ติดตั้งผ่านคอมพิวเตอร์",
+    steps: [
+      `มองหาไอคอนติดตั้ง ⊕ ที่แถบที่อยู่ URL (ด้านขวาของช่อง URL) ใน Chrome หรือ Edge`,
+      `หรือเปิดเมนู "⋮" ของเบราว์เซอร์ แล้วเลือก "ติดตั้ง..." (Install...)`,
+      `หากใช้ Safari หรือ Firefox บนคอมพิวเตอร์ เบราว์เซอร์เหล่านี้ยังไม่รองรับการติดตั้งแอป แนะนำให้ใช้งานผ่านหน้าเว็บได้ตามปกติ หรือสลับไปใช้ Chrome/Edge เพื่อติดตั้ง`
+    ]
+  };
+}
+
+function openInstallGuideModal() {
+  const { subtitle, steps } = getInstallGuideContent();
+  const subtitleEl = document.getElementById("install-guide-subtitle");
+  const stepsEl = document.getElementById("install-guide-steps");
+  if (subtitleEl) subtitleEl.textContent = subtitle;
+  if (stepsEl) stepsEl.innerHTML = steps.map(step => `<li>${step}</li>`).join("");
+  const modal = document.getElementById("modal-install-guide");
+  if (modal) modal.classList.remove("hidden");
+}
+
+function closeInstallGuideModal() {
+  const modal = document.getElementById("modal-install-guide");
+  if (modal) modal.classList.add("hidden");
+}
+
 async function installWebApp() {
   if (isWebAppStandalone()) {
     alert("แอปถูกติดตั้งไว้แล้ว");
     updateInstallButtonVisibility();
     return;
   }
-  if (!deferredPwaInstallPrompt) {
-    alert("หากปุ่มติดตั้งของเบราว์เซอร์ยังไม่ขึ้น ให้เปิดเมนู browser แล้วเลือก Add to Home screen / Install app");
+
+  // เบราว์เซอร์ที่รองรับ beforeinstallprompt (Chrome/Edge/Samsung Internet ที่ตรงเงื่อนไข) ใช้ native prompt ได้เลย
+  if (deferredPwaInstallPrompt) {
+    const promptEvent = deferredPwaInstallPrompt;
+    deferredPwaInstallPrompt = null;
+    promptEvent.prompt();
+    try {
+      await promptEvent.userChoice;
+    } finally {
+      updateInstallButtonVisibility();
+    }
     return;
   }
-  const promptEvent = deferredPwaInstallPrompt;
-  deferredPwaInstallPrompt = null;
-  promptEvent.prompt();
-  try {
-    await promptEvent.userChoice;
-  } finally {
-    updateInstallButtonVisibility();
-  }
+
+  // ทุกกรณีอื่น (iOS ทุกเบราว์เซอร์, Firefox, Desktop Safari, in-app browser, หรือ native prompt ยังไม่ยิง)
+  // ใช้ modal แนะนำขั้นตอนตามอุปกรณ์/เบราว์เซอร์ที่ตรวจพบแทน เพื่อให้ใช้ได้ทั้งรุ่นเก่าและใหม่
+  openInstallGuideModal();
 }
 
 // ============================================================
@@ -74,10 +166,69 @@ const API_SECRET = "VESPA2025SECRET"; // รหัสผ่านสำหรั
 function apiUrl(params) {
   const url = new URL(API_URL);
   url.searchParams.set("key", API_SECRET);
+  const currentUser = getCurrentUser();
+  if (currentUser) url.searchParams.set("user", currentUser);
   for (const [k, v] of Object.entries(params)) {
     url.searchParams.set(k, v);
   }
   return url.toString();
+}
+
+// ============================================================
+// 🔐 ระบบ Login / Session (เก็บ session ไว้ในเครื่อง หมดอายุอัตโนมัติ)
+// ============================================================
+const AUTH_SESSION_KEY = "vespaAssetSession";
+const SESSION_MAX_AGE_MS = 12 * 60 * 60 * 1000; // 12 ชั่วโมง
+
+function getSession() {
+  try {
+    const raw = localStorage.getItem(AUTH_SESSION_KEY);
+    if (!raw) return null;
+    const session = JSON.parse(raw);
+    if (!session || !session.user || !session.loginAt) return null;
+    if (Date.now() - session.loginAt > SESSION_MAX_AGE_MS) {
+      localStorage.removeItem(AUTH_SESSION_KEY);
+      return null;
+    }
+    return session;
+  } catch (e) {
+    return null;
+  }
+}
+
+function setSession(user) {
+  localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({ user, loginAt: Date.now() }));
+}
+
+function clearSession() {
+  localStorage.removeItem(AUTH_SESSION_KEY);
+}
+
+function getCurrentUser() {
+  const session = getSession();
+  return session ? session.user : "";
+}
+
+// เรียก backend เพื่อตรวจสอบ user/pass กับชีต "Approve all"
+async function loginUser(username, password) {
+  const url = new URL(API_URL);
+  url.searchParams.set("key", API_SECRET);
+  url.searchParams.set("action", "login");
+  url.searchParams.set("user", username);
+  url.searchParams.set("pass", password);
+
+  const res = await fetch(url.toString());
+  const data = await res.json().catch(() => null);
+  if (data && data.status === "success") {
+    setSession(username);
+    return { ok: true };
+  }
+  return { ok: false, message: (data && data.message) || "เข้าสู่ระบบไม่สำเร็จ" };
+}
+
+function logoutUser() {
+  clearSession();
+  window.location.reload();
 }
 
 const DEBUG_LOG_ENABLED = false;

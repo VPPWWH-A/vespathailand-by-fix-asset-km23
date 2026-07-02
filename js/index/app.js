@@ -397,6 +397,7 @@ async function uploadScanImageInBackground(file, meta) {
     const base64 = await compressImageToBase64(file);
     addBgUpload({
       key: API_SECRET,
+      user: getCurrentUser(),
       action: "uploadScanImage",
       requestId: meta.requestId,
       assetNo: meta.assetNo,
@@ -443,6 +444,7 @@ async function confirmScanCount() {
     // Single POST request for count mark, location update, and deferred image upload marker.
     const payload = {
       key: API_SECRET,
+      user: getCurrentUser(),
       action: "updateAsset",
       requestId: requestId,
       clientSentAt: new Date().toISOString(),
@@ -873,9 +875,24 @@ async function startScanner() {
   }
 }
 
+// html5-qrcode's clear() ล้าง innerHTML ของ #reader ทั้งหมด (รวม placeholder/มุมกรอบที่เป็น static HTML เดิม)
+// ต้องสร้างกลับเข้าไปใหม่ ไม่งั้นกล่องสแกนจะว่างเปล่าถาวรหลังปิด/สแกนไม่สำเร็จครั้งแรก
+function resetReaderPlaceholder() {
+  const reader = document.getElementById("reader");
+  if (!reader || reader.querySelector(".scanner-placeholder")) return;
+  reader.innerHTML = `
+        <div class="scanner-placeholder">
+          <div class="big-icon">📷</div>
+          <p>แตะ "เปิดกล้อง" เพื่อสแกน</p>
+        </div>
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>`;
+}
+
 async function stopScanner() {
   if (!html5QrCode) {
     isScanning = false;
+    resetReaderPlaceholder();
     return;
   }
   try {
@@ -887,6 +904,7 @@ async function stopScanner() {
     html5QrCode = null;
     isScanning = false;
     isProcessing = false;
+    resetReaderPlaceholder();
     const startBtn = document.getElementById("btn-start");
     const stopBtn = document.getElementById("btn-stop");
     if (startBtn) startBtn.classList.remove("hidden");
@@ -1055,4 +1073,68 @@ handheldInput.addEventListener('input', function() {
 });
 
 setHandheldDisplay(HANDHELD_PLACEHOLDER, true);
+
+// ==================== AUTH / LOGIN GATE ====================
+function applyLoginUI() {
+  const overlay = document.getElementById("login-overlay");
+  const chip = document.getElementById("current-user-chip");
+  const nameEl = document.getElementById("current-user-name");
+  const user = getCurrentUser();
+
+  if (user) {
+    if (overlay) overlay.classList.add("hidden");
+    if (chip) chip.classList.remove("hidden");
+    if (nameEl) nameEl.textContent = user;
+  } else {
+    if (overlay) overlay.classList.remove("hidden");
+    if (chip) chip.classList.add("hidden");
+  }
+}
+
+async function handleLoginSubmit(event) {
+  event.preventDefault();
+  const usernameEl = document.getElementById("login-username");
+  const passwordEl = document.getElementById("login-password");
+  const errorEl = document.getElementById("login-error");
+  const btn = document.getElementById("login-submit-btn");
+  const username = (usernameEl.value || "").trim();
+  const password = passwordEl.value || "";
+
+  errorEl.classList.add("hidden");
+  if (!username || !password) {
+    errorEl.textContent = "กรุณากรอก Username และ Password";
+    errorEl.classList.remove("hidden");
+    return false;
+  }
+
+  btn.disabled = true;
+  const originalLabel = btn.textContent;
+  btn.textContent = "กำลังตรวจสอบ...";
+
+  try {
+    const result = await loginUser(username, password);
+    if (result.ok) {
+      passwordEl.value = "";
+      applyLoginUI();
+    } else {
+      errorEl.textContent = result.message;
+      errorEl.classList.remove("hidden");
+    }
+  } catch (e) {
+    errorEl.textContent = "เชื่อมต่อ Backend ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง";
+    errorEl.classList.remove("hidden");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
+  return false;
+}
+
+function confirmLogout() {
+  if (confirm("ต้องการออกจากระบบหรือไม่?")) {
+    logoutUser();
+  }
+}
+
+applyLoginUI();
 
