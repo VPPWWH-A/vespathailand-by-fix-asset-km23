@@ -121,23 +121,24 @@ function getStatusBadge(status) {
 
 function getDirectDriveImageHtml(link) {
   if (!link) return "";
+  const safeLink = escHtml(link);
   const match = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
     const fileId = match[1];
-    const thumbUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+    const thumbUrl = escHtml(`https://drive.google.com/thumbnail?id=${fileId}&sz=w800`);
     return `
       <div style="margin-top: 8px; text-align: center;">
-        <a href="${link}" target="_blank" style="display:block;">
+        <a href="${safeLink}" target="_blank" style="display:block;">
           <img src="${thumbUrl}" alt="Attached Image" style="max-width: 100%; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-height: 250px; object-fit: contain; background: #f3f4f6;">
         </a>
         <div style="margin-top: 12px;">
-          <a href="${link}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--bg);color:var(--primary);border:1px solid var(--primary);border-radius:6px;text-decoration:none;font-weight:600;font-size:12px;transition:0.2s;">🔗 เปิดดูรูปภาพเต็มๆ ใน Google Drive</a>
+          <a href="${safeLink}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--bg);color:var(--primary);border:1px solid var(--primary);border-radius:6px;text-decoration:none;font-weight:600;font-size:12px;transition:0.2s;">🔗 เปิดดูรูปภาพเต็มๆ ใน Google Drive</a>
         </div>
       </div>
     `;
   }
   // Fallback
-  return `<a href="${link}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--primary);color:white;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px;width:100%;justify-content:center;box-shadow:0 4px 12px rgba(37,99,235,0.2);">📸 ดูรูปภาพแนบสติ๊กเกอร์เสียหาย</a>`;
+  return `<a href="${safeLink}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--primary);color:white;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px;width:100%;justify-content:center;box-shadow:0 4px 12px rgba(37,99,235,0.2);">📸 ดูรูปภาพแนบสติ๊กเกอร์เสียหาย</a>`;
 }
 
 function setDetailModalSource(type) {
@@ -695,7 +696,7 @@ async function submitManualAdd() {
         warehouse: masterAsset.warehouse || group,
         area: masterAsset.area || zone,
         status,
-        countRound: getSelectedCountRound(),
+        countRound: document.getElementById("scan-count-round").value || "1",
         image: manualImageBase64,
         isScan: true,
         isUnregistered: false,

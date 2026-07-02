@@ -600,6 +600,13 @@ function decodeThaiKeyboard(str) {
   let result = "";
   for(let i=0; i<str.length; i++) {
     let char = str[i];
+    // "-" เป็นตัวคั่นจริงในรหัสทรัพย์สิน (เช่น TEST-ASSET-002) ต้องคงไว้เสมอ ห้ามแปลงเป็น "3"
+    // แม้ปุ่มเดียวกันบนคีย์บอร์ดไทย (Kedmanee) จะพิมพ์ "-" ออกมาแทนเลข 3 ก็ตาม เพราะจะทำให้
+    // รหัสที่มี "-" อยู่แล้วจริงๆ พังทุกครั้งที่สแกน (ทั้งกล้องและเครื่อง handheld)
+    if (char === "-") {
+      result += "-";
+      continue;
+    }
     let idx = th.indexOf(char);
     result += (idx !== -1) ? en[idx] : char;
   }
@@ -869,6 +876,8 @@ function getScannerConfig(withAspectRatio) {
     qrbox: getScannerQrbox,
     // ใช้ native BarcodeDetector ของเบราว์เซอร์แทน decoder JS ล้วนถ้ารองรับ (แม่นยำ/เร็วกว่ามาก
     // โดยเฉพาะมุมเอียง/แสงไม่ดี) เบราว์เซอร์รุ่นเก่าที่ไม่รองรับจะ fallback กลับไปใช้ตัวเดิมอัตโนมัติ
+    // ⚠️ html5-qrcode มี known issue เรื่อง mapping format enum กับ native BarcodeDetector ไม่ตรงกันเป๊ะ
+    // ทุกกันแก้จุดนี้ต้องทดสอบสแกนทั้ง QR และ CODE_128 จริงคู่กันเสมอ (2 รูปแบบที่ label.js ใช้จริง)
     experimentalFeatures: { useBarCodeDetectorIfSupported: true }
   };
   const formatsToSupport = getSupportedScannerFormats();

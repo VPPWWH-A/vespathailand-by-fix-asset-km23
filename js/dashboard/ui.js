@@ -1357,22 +1357,23 @@ function changeUnregPage(dir) {
 
 function getDirectDriveImageHtml(link) {
   if (!link) return "";
+  const safeLink = escHtml(link);
   const match = link.match(/(?:id=|\/d\/)([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
     const fileId = match[1];
-    const thumbUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=800`;
+    const thumbUrl = escHtml(`https://drive.google.com/thumbnail?id=${fileId}&sz=800`);
     return `
       <div style="margin-top: 8px; text-align: center;">
-        <a href="${link}" target="_blank" style="display:block;">
+        <a href="${safeLink}" target="_blank" style="display:block;">
           <img src="${thumbUrl}" alt="Attached Image" style="max-width: 100%; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-height: 250px; object-fit: contain; background: #f3f4f6;">
         </a>
         <div style="margin-top: 12px;">
-          <a href="${link}" target="_blank" class="btn btn-secondary" style="display:inline-flex;font-size:12px;padding:6px 12px;">Open full image in Google Drive</a>
+          <a href="${safeLink}" target="_blank" class="btn btn-secondary" style="display:inline-flex;font-size:12px;padding:6px 12px;">Open full image in Google Drive</a>
         </div>
       </div>
     `;
   }
-  return `<a href="${link}" target="_blank" class="btn btn-primary" style="width:100%;">View attached damaged barcode image</a>`;
+  return `<a href="${safeLink}" target="_blank" class="btn btn-primary" style="width:100%;">View attached damaged barcode image</a>`;
 }
 
 function formatDateTime(raw) {
