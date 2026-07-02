@@ -818,7 +818,9 @@ async function handlePhotoScan(event) {
     const decodedText = await tempHtml5QrCode.scanFile(file, true);
     await onScanSuccess(decodedText);
   } catch (err) {
-    alert("ไม่สามารถถอดรหัสจากรูปภาพนี้ได้ กรุณาถ่ายให้ชัดและให้บาร์โค้ดอยู่ในกรอบภาพ");
+    // แสดงสาเหตุจริงด้วย ไม่ใช่แค่ข้อความกว้างๆ เพื่อให้วินิจฉัยปัญหาได้ตรงจุดโดยไม่ต้องเดา
+    const detail = extractCameraErrorMessage(err);
+    alert("ไม่สามารถถอดรหัสจากรูปภาพนี้ได้ กรุณาถ่ายให้ชัดและให้บาร์โค้ดอยู่ในกรอบภาพ\n\n(รายละเอียด: " + detail + ")");
     setResult("");
   } finally {
     if (needToClearTemp && tempHtml5QrCode) {
