@@ -162,7 +162,7 @@ async function installWebApp() {
 // เว็บนี้เรียกผ่าน Cloudflare Worker proxy แทนการยิง Apps Script ตรงๆ
 // secret key จริงถูกแปะโดย Worker ฝั่ง server เท่านั้น ไม่ฝังใน frontend อีกต่อไป
 // (ดู cloudflare-worker/proxy.js สำหรับโค้ด proxy และวิธี deploy)
-const API_URL = "https://asset-proxy.YOUR-SUBDOMAIN.workers.dev"; // TODO: แทนด้วย URL ของ Worker หลัง deploy
+const API_URL = "https://assetkm23-proxy.vppwspw-assetkm23.workers.dev";
 
 // ===== ฟังก์ชัน helper สร้าง URL เรียก Worker =====
 function apiUrl(params) {
