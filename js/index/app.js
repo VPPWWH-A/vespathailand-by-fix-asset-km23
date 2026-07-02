@@ -231,6 +231,9 @@ async function applyCameraFocus() {
     const zoomValue = Math.min(capabilities.zoom.max || 2, Math.max(capabilities.zoom.min || 1, 1.2));
     advanced.push({ zoom: zoomValue });
   }
+  if (capabilities.pointsOfInterest) {
+    advanced.push({ pointsOfInterest: [{ x: 0.5, y: 0.5 }] });
+  }
 
   if (!advanced.length) return;
 
@@ -988,12 +991,7 @@ async function runAutoFocusCycle() {
 
   autoFocusAttempts++;
   try { await applyCameraFocus(); } catch (e) {}
-  // สลับ soft focus กับ hard refocus: ได้ autofocus บ่อยขึ้น แต่ไม่ restart video ทุก 1.4 วินาทีจนภาพสะดุด
-  if (autoFocusAttempts % 2 === 0) {
-    await refocusCamera(null, true);
-  } else {
-    showFocusRing(null, true);
-  }
+  showFocusRing(null, true);
   autoFocusTimer = setTimeout(runAutoFocusCycle, AUTO_FOCUS_INTERVAL_MS);
 }
 
@@ -1003,13 +1001,7 @@ async function refocusCamera(event, isAuto) {
   if (!isAuto) autoFocusAttempts = 0; // แตะเองถือว่าให้โควตารอบอัตโนมัติใหม่
   showFocusRing(event, isAuto);
   try {
-    const target = cachedCameraId || { facingMode: { ideal: "environment" } };
-    const onDecoded = decodedText => onScanSuccess(decodedText);
-    const onScanError = () => {};
-    await html5QrCode.stop();
-    if (!isScanning || !html5QrCode || isProcessing) return;
-    await html5QrCode.start(target, getScannerConfig(false), onDecoded, onScanError);
-    try { await applyCameraFocus(); } catch (e) {}
+    await applyCameraFocus();
   } catch (err) {
     console.warn("refocusCamera failed", err);
   } finally {
